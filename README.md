@@ -1,1 +1,1 @@
-# Picasso-Charts
+# PicassoCharts

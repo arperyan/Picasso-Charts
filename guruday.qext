@@ -1,0 +1,9 @@
+{
+	"name" : "GuruDay",
+	"description" : "Example for GuruDay",
+	"icon" : "extension",
+	"type" : "visualization",
+	"version": "1.0",
+	"preview" : "extension",
+	"author": "Alexander Karlsson - Developer Relations - akl@qlik.com"
+}
