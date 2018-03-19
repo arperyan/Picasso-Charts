@@ -11,7 +11,7 @@ define([], function() {
             measures: {
                 uses: "measures",
                 min: 1,
-                max: 1
+                max: 2
             },
             sorting: {
                 uses: "sorting"

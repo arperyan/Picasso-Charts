@@ -1,14 +1,12 @@
 define([
     './guruday-properties',
     './node_modules/picasso.js/dist/picasso.min',
-    './node_modules/picasso-plugin-q/dist/picasso-q.min',
-    './node_modules/picasso-plugin-hammer/dist/picasso-hammer.min'
+    './node_modules/picasso-plugin-q/dist/picasso-q.min'
 ],
-    function (properties, picasso, pq, hammer) {
+    function (properties, picasso, pq) {
 
         picasso.use(pq)
         picasso.renderer.prio(['canvas'])
-        picasso.use(hammer)
 
         var box = function (opts) {
           return  {
@@ -159,15 +157,6 @@ define([
             }
           };
         }
-
-        function mouseEventToRangeEvent(e) {
-        	return {
-              center: { x: e.clientX, y: e.clientY },
-              deltaX: e.movementX,
-              deltaY: e.movementY
-            };
-        }
-
         return {
             definition: properties,
             initialProperties: {
@@ -179,8 +168,6 @@ define([
                 selections: "CONFIRM"
             },
             paint: function ($element, layout) {
-
-              let rangeRef = 'rangeY';
 
               this.chart = picasso.chart({
                   element: $element[0],
@@ -205,11 +192,7 @@ define([
                       components: [{
                           type: 'axis',
                           dock: 'left',
-                          scale: 'measure',
-                          formatter: {
-                            type: 'd3-number',
-                            format: '$,.1r'
-                          }
+                          scale: 'measure'
                       }, {
                           type: 'axis',
                           dock: 'bottom',
@@ -219,21 +202,7 @@ define([
                           line({ c: 'lines'}),
                           point({ c: 'p'}),
                           labels({ c: 'bars' })
-                      ],
-                      interactions : [{
-                          type: 'native',
-                          events: {
-                            rangestart: function(e) {
-                              this.chart.component(rangeRef).emit('rangeStart', mouseEventToRangeEvent(e));
-                            },
-                            mousemove: function(e) {
-                              this.chart.component(rangeRef).emit('rangeMove', mouseEventToRangeEvent(e));
-                            },
-                            mouseup: function(e) {
-                              this.chart.component(rangeRef).emit('rangeEnd', mouseEventToRangeEvent(e));
-                            }
-                          }
-                        }]
+                      ]
                   }
               })
 
@@ -243,7 +212,8 @@ define([
                   this.selectValues(0, selections, true)
               });
 
-              return new Promise((resolve, reject) => {
+
+                return new Promise((resolve, reject) => {
                     this.chart.update({
                         data: [{
                             type: 'q',

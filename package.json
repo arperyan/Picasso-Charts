@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "picasso-plugin-hammer": "^0.5.3",
     "picasso-plugin-q": "^0.5.1",
     "picasso.js": "^0.5.1"
   }
