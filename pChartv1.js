@@ -1,25 +1,23 @@
 define([
-    './guruday-properties',
+    './pChart-properties',
     './node_modules/picasso.js/dist/picasso.min',
-    './node_modules/picasso-plugin-q/dist/picasso-q.min',
-    './node_modules/picasso-plugin-hammer/dist/picasso-hammer.min'
+    './node_modules/picasso-plugin-q/dist/picasso-q.min'
 ],
-    function (properties, picasso, pq, hammer) {
+    function (properties, picasso, pq) {
 
         picasso.use(pq)
         picasso.renderer.prio(['canvas'])
-        picasso.use(hammer)
 
         var box = function (opts) {
           return  {
             type: 'box',
-            key: 'bars',
+            key: opts.id,
             data: {
                 extract: {
                     field: 'qDimensionInfo/0',
                     props: {
-                        start: 0,
-                        end: { field: 'qMeasureInfo/0' }
+                        start: opts.start,
+                        end: opts.end
                     }
                 }
             },
@@ -27,7 +25,8 @@ define([
                 major: { scale: 'dimension' },
                 minor: { scale: 'measure' },
                 box: {
-                    fill: { scale: 'color', ref: 'end' }
+                    fill: opts.fill,
+                    width: opts.width
                 }
             },
             brush: {
@@ -49,13 +48,13 @@ define([
 
         var line = function (opts) {
           return  {
-            key: 'lines',
+            key: opts.id,
             type: 'line',
             data: {
               extract: {
                 field: 'qDimensionInfo/0',
                 props: {
-                  line: { field: 'qMeasureInfo/0' }
+                  line: opts.line
                 }
               }
             },
@@ -87,13 +86,13 @@ define([
 
         var point = function (opts) {
           return {
-            key: 'p',
+            key: opts.id,
             type: 'point',
             data: {
               extract: {
                 field: 'qDimensionInfo/0',
                 props: {
-                  dot: { field: 'qMeasureInfo/0' }
+                  dot: opts.dot
                 }
               }
             },
@@ -159,28 +158,17 @@ define([
             }
           };
         }
-
-        function mouseEventToRangeEvent(e) {
-        	return {
-              center: { x: e.clientX, y: e.clientY },
-              deltaX: e.movementX,
-              deltaY: e.movementY
-            };
-        }
-
         return {
             definition: properties,
             initialProperties: {
                 qHyperCubeDef: {
                     qDimensions: [],
                     qMeasures: [],
-                    qInitialDataFetch: [{ qTop: 0, qLeft: 0, qWidth: 2, qHeight: 2000 }]
+                    qInitialDataFetch: [{ qTop: 0, qLeft: 0, qWidth: 10, qHeight: 500 }]
                 },
                 selections: "CONFIRM"
             },
             paint: function ($element, layout) {
-
-              let rangeRef = 'rangeY';
 
               this.chart = picasso.chart({
                   element: $element[0],
@@ -191,7 +179,7 @@ define([
                               padding: 0.2
                           },
                           measure: {
-                              data: { field: 'qMeasureInfo/0' },
+                              data: { fields: ['qMeasureInfo/0','qMeasureInfo/1']},
                               invert: true,
                               expand: 0.1,
                               min: 0,
@@ -205,35 +193,26 @@ define([
                       components: [{
                           type: 'axis',
                           dock: 'left',
-                          scale: 'measure',
-                          formatter: {
-                            type: 'd3-number',
-                            format: '$,.1r'
-                          }
+                          scale: 'measure'
                       }, {
                           type: 'axis',
                           dock: 'bottom',
                           scale: 'dimension'
                       },
-                          box({ c: 'bars'}),
-                          line({ c: 'lines'}),
-                          point({ c: 'p'}),
+                          box({ id: 'bars',
+                            start: 0,
+                            end: { field: 'qMeasureInfo/0' },
+                            width: 1,
+                            fill: { scale: 'color', ref: 'end' }
+                          }),
+                          line({ id: 'lines',
+                            line: { field: 'qMeasureInfo/1' }
+                          }),
+                          point({ id: 'p',
+                            dot: { field: 'qMeasureInfo/1' }
+                          }),
                           labels({ c: 'bars' })
-                      ],
-                      interactions : [{
-                          type: 'native',
-                          events: {
-                            rangestart: function(e) {
-                              this.chart.component(rangeRef).emit('rangeStart', mouseEventToRangeEvent(e));
-                            },
-                            mousemove: function(e) {
-                              this.chart.component(rangeRef).emit('rangeMove', mouseEventToRangeEvent(e));
-                            },
-                            mouseup: function(e) {
-                              this.chart.component(rangeRef).emit('rangeEnd', mouseEventToRangeEvent(e));
-                            }
-                          }
-                        }]
+                      ]
                   }
               })
 
@@ -243,10 +222,12 @@ define([
                   this.selectValues(0, selections, true)
               });
 
-              return new Promise((resolve, reject) => {
+
+                return new Promise((resolve, reject) => {
                     this.chart.update({
                         data: [{
                             type: 'q',
+                            key: 'qHyperCube',
                             data: layout.qHyperCube
                         }]
                     })

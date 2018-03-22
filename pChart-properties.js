@@ -5,7 +5,7 @@ define([], function() {
         items: {
             dimensions: {
                 uses: "dimensions",
-                min: 1,
+                min: 0,
                 max: 1
             },
             measures: {
