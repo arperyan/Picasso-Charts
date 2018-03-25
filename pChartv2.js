@@ -158,6 +158,40 @@ define([
             }
           };
         }
+
+        var legend = function (opts) {
+          return {
+            type: opts.type,
+            scale: opts.scale,
+            dock: opts.dock,
+            settings: {
+              layout: {  // Optional
+                size: 1, // Maximum number of columns (vertical) or rows (horizontal) // Optional
+                direction: 'rtl', // Layout direction. Either `'ltr'` or `'rtl'` // Optional
+              },
+              item: {  // Optional
+                // Settings applied per item
+                show: true, // Whether to show the current item // Optional
+                label: {  // Optional
+                  wordBreak: 'break-word', // Word break rule, how to apply line break if label text overflows its maxWidth property. Either `'break-word'` or `'break-all'` // Optional
+                  maxLines: 2, // Max number of lines allowed if label is broken into multiple lines (only applicable with wordBreak) // Optional
+                  maxWidth: 136, // Maximum width of label, in px // Optional
+                },
+                shape: {  // Optional
+                  type: 'square', // Optional
+                  size: 8, // Optional
+                }
+              },
+              title: {
+                show: true,
+                anchor: 'start',
+                //fill: 'red',
+                wordBreak: 'break-word'
+              }
+            }
+          };
+        }
+
         return {
             definition: properties,
             initialProperties: {
@@ -186,10 +220,12 @@ define([
                               include: [0]
                           },
                           color: {
-                              type: 'color',
-                              data: { fields: ['qMeasureInfo/0','qMeasureInfo/1']},
-                              range: ['red', 'blue']
-                          }
+                              data:  { extract: { field: 'qDimensionInfo/0' } } ,
+                              type: 'color'
+                              // range: ['red', 'blue']
+
+                          },
+
                       },
                       components: [{
                           type: 'axis',
@@ -200,6 +236,24 @@ define([
                           dock: 'bottom',
                           scale: 'dimension'
                       },
+                      legend({
+                        type: 'legend-cat',
+                        scale: 'color',
+                        dock: 'right',
+                      }),
+                      //     This is for Sequential legend
+                      //      type: 'legend-seq',
+                      //     settings: {
+                      //       fill: 'color',
+                      //       major: 'linear-scale',
+                      //       // tick: {
+                      //       //   label: (tickValue, index) => {
+                      //       //     const temp = ['Hot', 'Cold'];
+                      //       //     return temp[index % 2];
+                      //       //   },
+                      //       // }
+                      //     }
+                      // },
                       {
                           type: 'grid-line',
                           // x: {
@@ -218,22 +272,32 @@ define([
                             stroke: 'blue',
                             strokeWidth: 1
                           }
-                        },
-                          box({ id: 'bars',
-                            start: 0,
-                            end: { field: 'qMeasureInfo/0' },
-                            width: 1,
-                            fill: { scale: 'color', ref: 'end' }
-                          }),
-                          line({ id: 'lines',
-                            line: { field: 'qMeasureInfo/1' }
-                          }),
-                          point({ id: 'p',
-                            dot: { field: 'qMeasureInfo/1' },
-                            fill: '#12724d',
-                            size: 0.3
-                          }),
-                          labels({ c: 'bars' })
+                      },
+                      {
+                        type: 'text',
+                        text: 'Gravity (m/s2)',
+                        dock: 'left'
+                      }, {
+                        type: 'text',
+                        text: 'Density (g/cm3)',
+                        dock: 'bottom'
+                      },
+
+                        box({ id: 'bars',
+                          start: 0,
+                          end: { field: 'qMeasureInfo/0' },
+                          width: 1,
+                          fill: { scale: 'color'}
+                        }),
+                        line({ id: 'lines',
+                          line: { field: 'qMeasureInfo/1' }
+                        }),
+                        point({ id: 'p',
+                          dot: { field: 'qMeasureInfo/1' },
+                          fill: '#12724d',
+                          size: 0.3
+                        }),
+                        labels({ c: 'bars' })
                       ]
                   }
               })
