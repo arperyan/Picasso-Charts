@@ -100,7 +100,10 @@ define([
               x: { scale: 'dimension' },
               y: { scale: 'measure', ref: 'dot' },
               fill: opts.fill,
-              size: opts.size
+              size: opts.size,
+              opacity: 0.8,
+              strokeWidth: 2,
+              stroke: "#fff",
             },
             brush: {
                 trigger: [{
@@ -192,6 +195,29 @@ define([
           };
         }
 
+        var grid = function (opts) {
+          return {
+            type: 'grid-line',
+            key: opts.id,
+            // x: {
+            //   scale: 'dimension'
+            // },
+            y: {
+              scale: 'measure'
+            },
+            ticks: {
+              show: true,
+              stroke: 'red',
+              strokeWidth: 2,
+            },
+            minorTicks: {
+              show: true,
+              stroke: 'blue',
+              strokeWidth: 1
+            }
+          };
+        }
+
         return {
             definition: properties,
             initialProperties: {
@@ -235,11 +261,57 @@ define([
                       components: [{
                           type: 'axis',
                           dock: 'left',
-                          scale: 'measure'
+                          scale: 'measure',
+                          settings: {
+                            labels: {
+                              show: true,
+                              mode: 'auto', // Control how labels arrange themself. Availabe modes are `auto`, `horizontal`, `layered` and `tilted`. When set to `auto` the axis determines the best possible layout in the current context
+                              // maxGlyphCount: 20
+                              // tiltAngle: 35
+                            },
+                            ticks: {
+                              show: true, // Toggle ticks on/off // Optional
+                              margin: 14, // Space in pixels between the ticks and the line. // Optional
+                              tickSize: 0, // Size of the ticks in pixels. // Optional
+                            },
+                            line: {
+                              show: false, // Toggle line on/off // Optional
+                            }
+                          }
                       }, {
-                          type: 'axis',
-                          dock: 'bottom',
-                          scale: 'dimension'
+                        type: 'axis',
+                        scale: 'dimension',
+                        dock: 'bottom',
+                        settings: {
+                          labels: {
+                            show: true,
+                            mode: 'auto', // Control how labels arrange themself. Availabe modes are `auto`, `horizontal`, `layered` and `tilted`. When set to `auto` the axis determines the best possible layout in the current context
+                            // maxGlyphCount: 20
+                            // tiltAngle: 35
+                          },
+                          ticks: {
+                            show: true, // Toggle ticks on/off // Optional
+                            margin: 14, // Space in pixels between the ticks and the line. // Optional
+                            tickSize: 0, // Size of the ticks in pixels. // Optional
+                          },
+                          line: {
+                            show: false, // Toggle line on/off // Optional
+                          }
+                        },
+                        brush: {
+                          trigger: [{
+                            on: 'tap',
+                            contexts: ['highlight']
+                          }],
+                          consume: [{
+                            context: 'highlight',
+                            style: {
+                              inactive: {
+                                opacity: 0.3
+                              }
+                            }
+                          }]
+                        }
                       },
                       legend({
                         type: 'legend-cat',
@@ -259,28 +331,12 @@ define([
                       //       // }
                       //     }
                       // },
-                      {
-                          type: 'grid-line',
-                          // x: {
-                          //   scale: 'dimension'
-                          // },
-                          y: {
-                            scale: 'measure'
-                          },
-                          ticks: {
-                            show: true,
-                            stroke: 'red',
-                            strokeWidth: 2,
-                          },
-                          minorTicks: {
-                            show: true,
-                            stroke: 'blue',
-                            strokeWidth: 1
-                          }
-                      },
+
+                        grid({id: 'grid-line'}),
                       {
                         type: 'text',
                         text: measureLabels.join(', '),
+
                         dock: 'left'
                       }, {
                         type: 'text',
