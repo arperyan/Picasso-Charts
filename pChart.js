@@ -1,12 +1,15 @@
 define([
     './pChart-properties',
     './node_modules/picasso.js/dist/picasso.min',
-    './node_modules/picasso-plugin-q/dist/picasso-q.min'
+    './node_modules/picasso-plugin-q/dist/picasso-q.min',
+    './node_modules/picasso-plugin-hammer/dist/picasso-hammer.min'
+
 ],
-    function (properties, picasso, pq) {
+    function (properties, picasso, pq, picassoHammer) {
 
         picasso.use(pq)
         picasso.renderer.prio(['canvas'])
+        picasso.use(picassoHammer)
 
         var box = function (opts) {
           return  {
@@ -271,7 +274,7 @@ define([
                             },
                             ticks: {
                               show: true, // Toggle ticks on/off // Optional
-                              margin: 14, // Space in pixels between the ticks and the line. // Optional
+                              margin: 10, // Space in pixels between the ticks and the line. // Optional
                               tickSize: 0, // Size of the ticks in pixels. // Optional
                             },
                             line: {
@@ -286,12 +289,12 @@ define([
                           labels: {
                             show: true,
                             mode: 'auto', // Control how labels arrange themself. Availabe modes are `auto`, `horizontal`, `layered` and `tilted`. When set to `auto` the axis determines the best possible layout in the current context
-                            // maxGlyphCount: 20
+                            maxGlyphCount: 10
                             // tiltAngle: 35
                           },
                           ticks: {
                             show: true, // Toggle ticks on/off // Optional
-                            margin: 14, // Space in pixels between the ticks and the line. // Optional
+                            margin: 10, // Space in pixels between the ticks and the line. // Optional
                             tickSize: 0, // Size of the ticks in pixels. // Optional
                           },
                           line: {
@@ -358,8 +361,41 @@ define([
                           fill: '#12724d',
                           size: 0.3
                         }),
-                        labels({ c: 'bars' })
-                      ]
+                        labels({ c: 'bars' }),
+                        {
+                          type: 'brush-range',
+                          key: 'my-brush-range-component',
+                          settings: {
+                            brush: 'some-brush-context',
+                            scale: 'some-linear-scale'
+                          },
+                          target: {
+                            component: 'target-this-component'
+                          }
+                        }
+                      ],
+                      interactions: [{
+                        type: 'hammer',
+                        gestures: [{
+                          type: 'Pan',
+                          options: {
+                            event: 'range',
+                            direction: Hammer.DIRECTION_HORIZONTAL,
+                          },
+                          events: {
+                            rangestart: function(e) {
+                              this.component('my-brush-range-component').emit('rangeStart', e);
+                            },
+                            rangemove: function(e) {
+                              this.component('my-brush-range-component').emit('rangeMove', e);
+                            },
+                            rangend: function(e) {
+                              this.component('my-brush-range-component').emit('rangeEnd', e);
+                            }
+                          }
+                        }]
+                      }
+                    ],
                   }
               })
 
