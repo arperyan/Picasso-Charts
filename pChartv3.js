@@ -111,14 +111,14 @@ define([
             brush: {
                 trigger: [{
                   on: 'tap',
-                  contexts: ['highlight'],
+                  contexts: ['selections'],
                 }],
                 consume: [{
-                  context: 'highlight',
+                  context: 'selections',
                   style: {
                     active: {
                       stroke: '#fff',
-                      strokeWidth: 3
+                      strokeWidth: 3,
                     },
                     inactive: {
                       opacity: 0.3,
@@ -133,7 +133,7 @@ define([
           return {
             type: 'labels',
             key: 'labels-' + opts.c,
-            displayOrder: 1,
+            displayOrder: 2,
             settings: {
               sources: [{
                 component: opts.c,
@@ -296,9 +296,9 @@ define([
                             labels: {
                               show: true,
                               mode: 'auto', // Control how labels arrange themself. Availabe modes are `auto`, `horizontal`, `layered` and `tilted`. When set to `auto` the axis determines the best possible layout in the current context
-                              maxGlyphCount: 10,
+                              maxGlyphCount: 12,
                               // tiltAngle: 35
-                              //margin: 10
+                              margin: 10
                             },
                             ticks: {
                               show: false, // Toggle ticks on/off // Optional
@@ -318,9 +318,9 @@ define([
                           labels: {
                             show: true,
                               mode: 'auto', // Control how labels arrange themself. Availabe modes are `auto`, `horizontal`, `layered` and `tilted`. When set to `auto` the axis determines the best possible layout in the current context
-                              maxGlyphCount: 10,
+                              maxGlyphCount: 12,
                             // tiltAngle: 35
-                              //margin: 10
+                              margin: 10
                           },
                           ticks: {
                             show: false, // Toggle ticks on/off // Optional
@@ -354,7 +354,7 @@ define([
                           brush: 'highlight',
                           scale: 'dimension',
                           direction: 'horizontal',
-                          // displayOrder: 3,
+                          displayOrder: 3,
                           bubbles: {  // Optional
                             show: true,
                             align: 'start' // Where to anchor bubble [start|end] // Optional
@@ -403,7 +403,7 @@ define([
                       //     }
                       // },
 
-                        grid({id: 'gridline'}),
+                        grid({id: 'grid-line'}),
                       {
                         type: 'text',
                         text: measureLabels.join(', '),
@@ -422,14 +422,14 @@ define([
                           width: 1,
                           fill: { scale: 'color'}
                         }),
-                        line({ id: 'lines',
-                          line: { field: 'qMeasureInfo/1' }
-                        }),
-                        point({ id: 'p',
-                          dot: { field: 'qMeasureInfo/1' },
-                          fill: '#12724d',
-                          size: 0.3
-                        }),
+                        // line({ id: 'lines',
+                        //   line: { field: 'qMeasureInfo/1' }
+                        // }),
+                        // point({ id: 'p',
+                        //   dot: { field: 'qMeasureInfo/1' },
+                        //   fill: '#12724d',
+                        //   size: 0.3
+                        // }),
                         labels({ c: 'bars' }),
                       ],
                   }
