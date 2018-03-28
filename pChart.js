@@ -111,11 +111,15 @@ define([
             brush: {
                 trigger: [{
                   on: 'tap',
-                  contexts: ['highlight'],
+                  contexts: ['selections'],
                 }],
                 consume: [{
-                  context: 'highlight',
+                  context: 'selections',
                   style: {
+                    active: {
+                      stroke: '#fff',
+                      strokeWidth: 3,
+                    },
                     inactive: {
                       opacity: 0.3,
                     }
@@ -139,6 +143,7 @@ define([
                   settings: {
                     direction: 'down',
                     fontSize: 14,
+                    fontFamily: 'Arial',
                     align: 'align' in opts ? opts.align : 0.5,
                     labels: [{
                       placements: [
@@ -149,7 +154,7 @@ define([
                         },
                         {
                           position: 'inside',
-                          justify: 0.2,
+                          //justify: 0.2,
                           fill: '#fff'
                         }
                       ],
@@ -261,21 +266,44 @@ define([
                           },
 
                       },
+                      interactions: [{
+                            type: 'hammer',
+                            gestures: [{
+                              type: 'Pan',
+                              options: {
+                                event: 'range',
+                                direction: Hammer.DIRECTION_VERTICAL,
+                              },
+                              events: {
+                                rangestart: function(e) {
+                                  this.chart.component('brushrange').emit('rangeStart', e);
+                                },
+                                rangemove: function(e) {
+                                  this.chart.component('brushrange').emit('rangeMove', e);
+                                },
+                                rangeend: function(e) {
+                                  this.chart.component('brushrange').emit('rangeEnd', e);
+                                }
+                              }
+                            }]
+                      }],
                       components: [{
                           type: 'axis',
+                          key: 'y-axis',
                           dock: 'left',
                           scale: 'measure',
                           settings: {
                             labels: {
                               show: true,
                               mode: 'auto', // Control how labels arrange themself. Availabe modes are `auto`, `horizontal`, `layered` and `tilted`. When set to `auto` the axis determines the best possible layout in the current context
-                              // maxGlyphCount: 20
+                              maxGlyphCount: 12,
                               // tiltAngle: 35
+                              margin: 10
                             },
                             ticks: {
-                              show: true, // Toggle ticks on/off // Optional
-                              margin: 10, // Space in pixels between the ticks and the line. // Optional
-                              tickSize: 0, // Size of the ticks in pixels. // Optional
+                              show: false, // Toggle ticks on/off // Optional
+                              margin: 0, // Space in pixels between the ticks and the line. // Optional
+                              tickSize: 4, // Size of the ticks in pixels. // Optional
                             },
                             line: {
                               show: false, // Toggle line on/off // Optional
@@ -284,36 +312,54 @@ define([
                       }, {
                         type: 'axis',
                         scale: 'dimension',
+                        key: 'x-axis',
                         dock: 'bottom',
                         settings: {
                           labels: {
                             show: true,
-                            mode: 'auto', // Control how labels arrange themself. Availabe modes are `auto`, `horizontal`, `layered` and `tilted`. When set to `auto` the axis determines the best possible layout in the current context
-                            maxGlyphCount: 10
+                              mode: 'auto', // Control how labels arrange themself. Availabe modes are `auto`, `horizontal`, `layered` and `tilted`. When set to `auto` the axis determines the best possible layout in the current context
+                              maxGlyphCount: 12,
                             // tiltAngle: 35
+                              margin: 10
                           },
                           ticks: {
-                            show: true, // Toggle ticks on/off // Optional
-                            margin: 10, // Space in pixels between the ticks and the line. // Optional
-                            tickSize: 0, // Size of the ticks in pixels. // Optional
+                            show: false, // Toggle ticks on/off // Optional
+                            margin: 0, // Space in pixels between the ticks and the line. // Optional
+                            tickSize: 4, // Size of the ticks in pixels. // Optional
                           },
                           line: {
                             show: false, // Toggle line on/off // Optional
                           }
+                        }//,
+                        /////------------ Use this option to highlight the x-axis when the range brusihing is swithced off
+                        // brush: {
+                        //   trigger: [{
+                        //     on: 'tap',
+                        //     contexts: ['highlight']
+                        //   }],
+                        //   consume: [{
+                        //     context: 'highlight',
+                        //     style: {
+                        //       inactive: {
+                        //         opacity: 0.3
+                        //       }
+                        //     }
+                        //   }]
+                        // }
+                      },
+                      {
+                        type: 'brush-range',
+                        key: 'brushrange',
+                        settings: {
+                          brush: 'highlight',
+                          scale: 'dimension'
                         },
-                        brush: {
-                          trigger: [{
-                            on: 'tap',
-                            contexts: ['highlight']
-                          }],
-                          consume: [{
-                            context: 'highlight',
-                            style: {
-                              inactive: {
-                                opacity: 0.3
-                              }
-                            }
-                          }]
+                        bubbles: {  // Optional
+                          show: true, // True to show label bubble, false otherwise // Optional
+                          // align: 'start', // Where to anchor bubble [start|end] // Optional
+                        },
+                        target: {
+                          component: 'x-axis'
                         }
                       },
                       legend({
@@ -339,12 +385,13 @@ define([
                       {
                         type: 'text',
                         text: measureLabels.join(', '),
-
                         dock: 'left'
-                      }, {
+                      },
+                      {
                         type: 'text',
                         text: layout.qHyperCube.qDimensionInfo[0].qFallbackTitle,
-                        dock: 'bottom'
+                        dock: 'bottom',
+                        anchor: 'left'
                       },
 
                         box({ id: 'bars',
@@ -353,49 +400,16 @@ define([
                           width: 1,
                           fill: { scale: 'color'}
                         }),
-                        line({ id: 'lines',
-                          line: { field: 'qMeasureInfo/1' }
-                        }),
-                        point({ id: 'p',
-                          dot: { field: 'qMeasureInfo/1' },
-                          fill: '#12724d',
-                          size: 0.3
-                        }),
+                        // line({ id: 'lines',
+                        //   line: { field: 'qMeasureInfo/1' }
+                        // }),
+                        // point({ id: 'p',
+                        //   dot: { field: 'qMeasureInfo/1' },
+                        //   fill: '#12724d',
+                        //   size: 0.3
+                        // }),
                         labels({ c: 'bars' }),
-                        {
-                          type: 'brush-range',
-                          key: 'my-brush-range-component',
-                          settings: {
-                            brush: 'some-brush-context',
-                            scale: 'some-linear-scale'
-                          },
-                          target: {
-                            component: 'target-this-component'
-                          }
-                        }
                       ],
-                      interactions: [{
-                        type: 'hammer',
-                        gestures: [{
-                          type: 'Pan',
-                          options: {
-                            event: 'range',
-                            direction: Hammer.DIRECTION_HORIZONTAL,
-                          },
-                          events: {
-                            rangestart: function(e) {
-                              this.component('my-brush-range-component').emit('rangeStart', e);
-                            },
-                            rangemove: function(e) {
-                              this.component('my-brush-range-component').emit('rangeMove', e);
-                            },
-                            rangend: function(e) {
-                              this.component('my-brush-range-component').emit('rangeEnd', e);
-                            }
-                          }
-                        }]
-                      }
-                    ],
                   }
               })
 
