@@ -2,7 +2,7 @@ define([], function() {
 
   var dimensions = {
       uses: "dimensions",
-      min: 0,
+      min: 1,
       max: 1
   };
 
