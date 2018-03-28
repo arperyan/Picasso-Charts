@@ -1,12 +1,15 @@
 define([
     './pChart-properties',
     './node_modules/picasso.js/dist/picasso.min',
-    './node_modules/picasso-plugin-q/dist/picasso-q.min'
+    './node_modules/picasso-plugin-q/dist/picasso-q.min',
+    './node_modules/picasso-plugin-hammer/dist/picasso-hammer.min'
+
 ],
-    function (properties, picasso, pq) {
+    function (properties, picasso, pq, picassoHammer) {
 
         picasso.use(pq)
         picasso.renderer.prio(['canvas'])
+        picasso.use(picassoHammer)
 
         var box = function (opts) {
           return  {
@@ -136,6 +139,7 @@ define([
                   settings: {
                     direction: 'down',
                     fontSize: 14,
+                    fontFamily: 'Arial',
                     align: 'align' in opts ? opts.align : 0.5,
                     labels: [{
                       placements: [
@@ -146,7 +150,7 @@ define([
                         },
                         {
                           position: 'inside',
-                          justify: 0.2,
+                          //justify: 0.2,
                           fill: '#fff'
                         }
                       ],
@@ -266,13 +270,14 @@ define([
                             labels: {
                               show: true,
                               mode: 'auto', // Control how labels arrange themself. Availabe modes are `auto`, `horizontal`, `layered` and `tilted`. When set to `auto` the axis determines the best possible layout in the current context
-                              // maxGlyphCount: 20
+                              maxGlyphCount: 12,
                               // tiltAngle: 35
+                              margin: 10
                             },
                             ticks: {
-                              show: true, // Toggle ticks on/off // Optional
-                              margin: 14, // Space in pixels between the ticks and the line. // Optional
-                              tickSize: 0, // Size of the ticks in pixels. // Optional
+                              show: false, // Toggle ticks on/off // Optional
+                              margin: 0, // Space in pixels between the ticks and the line. // Optional
+                              tickSize: 4, // Size of the ticks in pixels. // Optional
                             },
                             line: {
                               show: false, // Toggle line on/off // Optional
@@ -285,14 +290,15 @@ define([
                         settings: {
                           labels: {
                             show: true,
-                            mode: 'auto', // Control how labels arrange themself. Availabe modes are `auto`, `horizontal`, `layered` and `tilted`. When set to `auto` the axis determines the best possible layout in the current context
-                            // maxGlyphCount: 20
+                              mode: 'auto', // Control how labels arrange themself. Availabe modes are `auto`, `horizontal`, `layered` and `tilted`. When set to `auto` the axis determines the best possible layout in the current context
+                              maxGlyphCount: 12,
                             // tiltAngle: 35
+                              margin: 10
                           },
                           ticks: {
-                            show: true, // Toggle ticks on/off // Optional
-                            margin: 14, // Space in pixels between the ticks and the line. // Optional
-                            tickSize: 0, // Size of the ticks in pixels. // Optional
+                            show: false, // Toggle ticks on/off // Optional
+                            margin: 0, // Space in pixels between the ticks and the line. // Optional
+                            tickSize: 4, // Size of the ticks in pixels. // Optional
                           },
                           line: {
                             show: false, // Toggle line on/off // Optional
@@ -336,12 +342,13 @@ define([
                       {
                         type: 'text',
                         text: measureLabels.join(', '),
-
                         dock: 'left'
-                      }, {
+                      },
+                      {
                         type: 'text',
                         text: layout.qHyperCube.qDimensionInfo[0].qFallbackTitle,
-                        dock: 'bottom'
+                        dock: 'bottom',
+                        anchor: 'left'
                       },
 
                         box({ id: 'bars',
@@ -358,8 +365,30 @@ define([
                           fill: '#12724d',
                           size: 0.3
                         }),
-                        labels({ c: 'bars' })
-                      ]
+                        labels({ c: 'bars' }),
+                      ],
+                    //   interactions: [{
+                    //     type: 'hammer',
+                    //     gestures: [{
+                    //       type: 'Pan',
+                    //       options: {
+                    //         event: 'range',
+                    //         direction: Hammer.DIRECTION_HORIZONTAL,
+                    //       },
+                    //       events: {
+                    //         rangestart: function(e) {
+                    //           this.component('my-brush-range-component').emit('rangeStart', e);
+                    //         },
+                    //         rangemove: function(e) {
+                    //           this.component('my-brush-range-component').emit('rangeMove', e);
+                    //         },
+                    //         rangend: function(e) {
+                    //           this.component('my-brush-range-component').emit('rangeEnd', e);
+                    //         }
+                    //       }
+                    //     }]
+                    //   }
+                    // ],
                   }
               })
 
