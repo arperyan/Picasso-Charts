@@ -409,8 +409,7 @@ define([
                         grid({id: 'gridline'}),
                       {
                         type: 'text',
-                        //text: measureLabels.join(', '),
-                        text: layout.qHyperCube.qMeasureInfo[0].qFallbackTitle,
+                        text: measureLabels.join(', '),
                         dock: 'left'
                       },
                       {
