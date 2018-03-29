@@ -67,22 +67,11 @@ define([
                 minor: { scale: 'measure', ref: 'line' }
               },
               layers: {
-                line: {}
+                curve: 'monotone', //// cardinal, linear
+                line: {
+                  stroke: opts.stroke
+                }
               }
-            },
-            brush: {
-                trigger: [{
-                  on: 'tap',
-                  contexts: ['highlight'],
-                }],
-                consume: [{
-                  context: 'highlight',
-                  style: {
-                    inactive: {
-                      opacity: 0.3,
-                    }
-                  }
-                }]
             }
           };
         }
@@ -91,6 +80,7 @@ define([
           return {
             key: opts.id,
             type: 'point',
+            //displayOrder: 12,
             data: {
               extract: {
                 field: 'qDimensionInfo/0',
@@ -121,7 +111,7 @@ define([
                       strokeWidth: 3
                     },
                     inactive: {
-                      opacity: 0.3,
+                      opacity: 0.3
                     }
                   }
                 }]
@@ -173,6 +163,7 @@ define([
         var legend = function (opts) {
           return {
             type: opts.type,
+            key: 'leg',
             scale: opts.scale,
             dock: opts.dock,
             settings: {
@@ -190,7 +181,7 @@ define([
                 },
                 shape: {  // Optional
                   type: 'square', // Optional
-                  size: 8, // Optional
+                  size: 12, // Optional
                 }
               },
               title: {
@@ -198,6 +189,18 @@ define([
                 anchor: 'start',
                 //fill: 'red',
                 wordBreak: 'break-word'
+              },
+              navigation: {
+                class: {
+                  'my-button': true
+                },
+                content: function(h, state) {
+                  return h('span', {
+                    class: {
+                      [`arrow-${state.direction}`]: true
+                    }
+                  })
+                }
               }
             }
           };
@@ -239,7 +242,7 @@ define([
             paint: function ($element, layout) {
 
 
-              var measureLabels = layout.qHyperCube.qMeasureInfo.map(function(d) {
+            var measureLabels = layout.qHyperCube.qMeasureInfo.map(function(d) {
                         		return d.qFallbackTitle;
                         	});
 
@@ -296,7 +299,7 @@ define([
                             labels: {
                               show: true,
                               mode: 'auto', // Control how labels arrange themself. Availabe modes are `auto`, `horizontal`, `layered` and `tilted`. When set to `auto` the axis determines the best possible layout in the current context
-                              maxGlyphCount: 10,
+                              //maxGlyphCount: 10,
                               // tiltAngle: 35
                               //margin: 10
                             },
@@ -318,7 +321,7 @@ define([
                           labels: {
                             show: true,
                               mode: 'auto', // Control how labels arrange themself. Availabe modes are `auto`, `horizontal`, `layered` and `tilted`. When set to `auto` the axis determines the best possible layout in the current context
-                              maxGlyphCount: 10,
+                              //maxGlyphCount: 10,
                             // tiltAngle: 35
                               //margin: 10
                           },
@@ -406,7 +409,8 @@ define([
                         grid({id: 'gridline'}),
                       {
                         type: 'text',
-                        text: measureLabels.join(', '),
+                        //text: measureLabels.join(', '),
+                        text: layout.qHyperCube.qMeasureInfo[0].qFallbackTitle,
                         dock: 'left'
                       },
                       {
@@ -423,7 +427,8 @@ define([
                           fill: { scale: 'color'}
                         }),
                         line({ id: 'lines',
-                          line: { field: 'qMeasureInfo/1' }
+                          line: { field: 'qMeasureInfo/1' },
+                          stroke: '#00ff1d'
                         }),
                         point({ id: 'p',
                           dot: { field: 'qMeasureInfo/1' },
@@ -441,6 +446,12 @@ define([
                   this.selectValues(0, selections, true)
               });
 
+              // this.chartBrush = this.chart.brush('selection')
+              // this.chartBrush.on('update', (added, removed) => {
+              //     const selections = [].concat(added, removed).map(v => v.values[0])
+              //     this.selectValues(0, selections, true)
+              // });
+
 
                 return new Promise((resolve, reject) => {
                     this.chart.update({
@@ -455,3 +466,4 @@ define([
             }
         }
     })
+
