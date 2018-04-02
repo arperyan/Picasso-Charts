@@ -33,10 +33,13 @@ define([
                 }
             },
             brush: {
-                trigger: [{
-                  on: 'tap',
-                  contexts: ['highlight'],
-                }],
+              trigger: [{
+                on: 'tap',
+                action: 'toggle',
+                contexts: ['highlight'],
+                propagation: 'stop', // 'stop' => prevent trigger from propagating further than the first shape
+                globalPropagation: 'stop', // 'stop' => prevent trigger of same type to be triggered on other components
+              }],
                 consume: [{
                   context: 'highlight',
                   style: {
@@ -53,6 +56,7 @@ define([
           return  {
             key: opts.id,
             type: 'line',
+            displayOrder: 2,
             data: {
               extract: {
                 field: 'qDimensionInfo/0',
@@ -67,19 +71,18 @@ define([
                 minor: { scale: 'measure', ref: 'line' }
               },
               layers: {
-                line: {}
+                curve: 'monotone', //// cardinal, linear
+                line: {
+                  stroke: opts.stroke
+                }
               }
             },
             brush: {
-                trigger: [{
-                  on: 'tap',
-                  contexts: ['highlight'],
-                }],
-                consume: [{
+              consume: [{
                   context: 'highlight',
                   style: {
                     inactive: {
-                      opacity: 0.3,
+                      opacity: 0.3
                     }
                   }
                 }]
@@ -91,6 +94,7 @@ define([
           return {
             key: opts.id,
             type: 'point',
+            displayOrder: 3,
             data: {
               extract: {
                 field: 'qDimensionInfo/0',
@@ -109,19 +113,22 @@ define([
               stroke: "#fff",
             },
             brush: {
-                trigger: [{
-                  on: 'tap',
-                  contexts: ['selections'],
-                }],
+              trigger: [{
+                on: 'tap',
+                action: 'toggle',
+                contexts: ['highlight'],
+                propagation: 'stop', // 'stop' => prevent trigger from propagating further than the first shape
+                globalPropagation: 'stop', // 'stop' => prevent trigger of same type to be triggered on other components
+              }],
                 consume: [{
-                  context: 'selections',
+                  context: 'highlight',
                   style: {
                     active: {
                       stroke: '#fff',
-                      strokeWidth: 3,
+                      strokeWidth: 3
                     },
                     inactive: {
-                      opacity: 0.3,
+                      opacity: 0.3
                     }
                   }
                 }]
@@ -132,8 +139,8 @@ define([
         var labels = function (opts) {
           return {
             type: 'labels',
-            key: 'labels-' + opts.c,
-            displayOrder: 2,
+            key: 'labels',
+            displayOrder: 4,
             settings: {
               sources: [{
                 component: opts.c,
@@ -142,10 +149,11 @@ define([
                   type: 'bar',
                   settings: {
                     direction: 'down',
-                    fontSize: 14,
+                    fontSize: opts.fontSize || 12,
                     fontFamily: 'Arial',
-                    align: 'align' in opts ? opts.align : 0.5,
-                    labels: [{
+                    //align: 'align' in opts ? opts.align : 0.5,
+                    align: 0.5,
+                     labels: [{
                       placements: [
                         {
                           position: 'opposite', // 'inside' | 'outside' | 'opposite'
@@ -158,9 +166,8 @@ define([
                           fill: '#fff'
                         }
                       ],
-                      label: function label(d) {
-                        //console.log(d);
-                        return (d.data.end.label);
+                      label({ data }) {
+                        return data ? data.end.label : '';
                       }
                     }]
                   }
@@ -173,6 +180,7 @@ define([
         var legend = function (opts) {
           return {
             type: opts.type,
+            key: 'leg',
             scale: opts.scale,
             dock: opts.dock,
             settings: {
@@ -190,7 +198,7 @@ define([
                 },
                 shape: {  // Optional
                   type: 'square', // Optional
-                  size: 8, // Optional
+                  size: 12, // Optional
                 }
               },
               title: {
@@ -198,7 +206,33 @@ define([
                 anchor: 'start',
                 //fill: 'red',
                 wordBreak: 'break-word'
+              },
+              navigation: {
+                class: {
+                  'my-button': true
+                },
+                content: function(h, state) {
+                  return h('span', {
+                    class: {
+                      [`arrow-${state.direction}`]: true
+                    }
+                  })
+                }
               }
+            },
+            brush: {
+                trigger: [{
+                  on: 'tap',
+                  contexts: ['highlight'],
+                }],
+                consume: [{
+                  context: 'highlight',
+                  style: {
+                    inactive: {
+                      opacity: 0.3
+                    }
+                  }
+                }]
             }
           };
         }
@@ -239,7 +273,7 @@ define([
             paint: function ($element, layout) {
 
 
-              var measureLabels = layout.qHyperCube.qMeasureInfo.map(function(d) {
+            var measureLabels = layout.qHyperCube.qMeasureInfo.map(function(d) {
                         		return d.qFallbackTitle;
                         	});
 
@@ -296,9 +330,9 @@ define([
                             labels: {
                               show: true,
                               mode: 'auto', // Control how labels arrange themself. Availabe modes are `auto`, `horizontal`, `layered` and `tilted`. When set to `auto` the axis determines the best possible layout in the current context
-                              maxGlyphCount: 12,
+                              //maxGlyphCount: 10,
                               // tiltAngle: 35
-                              margin: 10
+                              //margin: 10
                             },
                             ticks: {
                               show: false, // Toggle ticks on/off // Optional
@@ -318,9 +352,9 @@ define([
                           labels: {
                             show: true,
                               mode: 'auto', // Control how labels arrange themself. Availabe modes are `auto`, `horizontal`, `layered` and `tilted`. When set to `auto` the axis determines the best possible layout in the current context
-                              maxGlyphCount: 12,
+                              //maxGlyphCount: 10,
                             // tiltAngle: 35
-                              margin: 10
+                              //margin: 10
                           },
                           ticks: {
                             show: false, // Toggle ticks on/off // Optional
@@ -354,7 +388,7 @@ define([
                           brush: 'highlight',
                           scale: 'dimension',
                           direction: 'horizontal',
-                          displayOrder: 3,
+                          // displayOrder: 3,
                           bubbles: {  // Optional
                             show: true,
                             align: 'start' // Where to anchor bubble [start|end] // Optional
@@ -389,6 +423,8 @@ define([
                         scale: 'color',
                         dock: 'right',
                       }),
+                      labels({ c: 'bars'
+                      }),
                       //     This is for Sequential legend
                       //      type: 'legend-seq',
                       //     settings: {
@@ -403,7 +439,7 @@ define([
                       //     }
                       // },
 
-                        grid({id: 'grid-line'}),
+                        grid({id: 'gridline'}),
                       {
                         type: 'text',
                         text: measureLabels.join(', '),
@@ -413,7 +449,7 @@ define([
                         type: 'text',
                         text: layout.qHyperCube.qDimensionInfo[0].qFallbackTitle,
                         dock: 'bottom',
-                        anchor: 'left'
+                        // anchor: 'left'
                       },
 
                         box({ id: 'bars',
@@ -422,15 +458,16 @@ define([
                           width: 1,
                           fill: { scale: 'color'}
                         }),
-                        // line({ id: 'lines',
-                        //   line: { field: 'qMeasureInfo/1' }
-                        // }),
-                        // point({ id: 'p',
-                        //   dot: { field: 'qMeasureInfo/1' },
-                        //   fill: '#12724d',
-                        //   size: 0.3
-                        // }),
-                        labels({ c: 'bars' }),
+                        line({ id: 'lines',
+                          line: { field: 'qMeasureInfo/1' },
+                          stroke: '#00ff1d'
+                        }),
+                        point({ id: 'p',
+                          dot: { field: 'qMeasureInfo/1' },
+                          fill: '#12724d',
+                          size: 0.3
+                        }),
+
                       ],
                   }
               })
@@ -440,6 +477,12 @@ define([
                   const selections = [].concat(added, removed).map(v => v.values[0])
                   this.selectValues(0, selections, true)
               });
+
+              // this.chartBrush = this.chart.brush('selection')
+              // this.chartBrush.on('update', (added, removed) => {
+              //     const selections = [].concat(added, removed).map(v => v.values[0])
+              //     this.selectValues(0, selections, true)
+              // });
 
 
                 return new Promise((resolve, reject) => {

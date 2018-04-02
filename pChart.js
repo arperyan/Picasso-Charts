@@ -33,10 +33,13 @@ define([
                 }
             },
             brush: {
-                trigger: [{
-                  on: 'tap',
-                  contexts: ['highlight'],
-                }],
+              trigger: [{
+                on: 'tap',
+                action: 'toggle',
+                contexts: ['highlight'],
+                propagation: 'stop', // 'stop' => prevent trigger from propagating further than the first shape
+                globalPropagation: 'stop', // 'stop' => prevent trigger of same type to be triggered on other components
+              }],
                 consume: [{
                   context: 'highlight',
                   style: {
@@ -53,6 +56,7 @@ define([
           return  {
             key: opts.id,
             type: 'line',
+            displayOrder: 2,
             data: {
               extract: {
                 field: 'qDimensionInfo/0',
@@ -72,6 +76,16 @@ define([
                   stroke: opts.stroke
                 }
               }
+            },
+            brush: {
+              consume: [{
+                  context: 'highlight',
+                  style: {
+                    inactive: {
+                      opacity: 0.3
+                    }
+                  }
+                }]
             }
           };
         }
@@ -80,7 +94,7 @@ define([
           return {
             key: opts.id,
             type: 'point',
-            //displayOrder: 12,
+            displayOrder: 3,
             data: {
               extract: {
                 field: 'qDimensionInfo/0',
@@ -99,10 +113,13 @@ define([
               stroke: "#fff",
             },
             brush: {
-                trigger: [{
-                  on: 'tap',
-                  contexts: ['highlight'],
-                }],
+              trigger: [{
+                on: 'tap',
+                action: 'toggle',
+                contexts: ['highlight'],
+                propagation: 'stop', // 'stop' => prevent trigger from propagating further than the first shape
+                globalPropagation: 'stop', // 'stop' => prevent trigger of same type to be triggered on other components
+              }],
                 consume: [{
                   context: 'highlight',
                   style: {
@@ -122,8 +139,8 @@ define([
         var labels = function (opts) {
           return {
             type: 'labels',
-            key: 'labels-' + opts.c,
-            displayOrder: 1,
+            key: 'labels',
+            displayOrder: 4,
             settings: {
               sources: [{
                 component: opts.c,
@@ -132,10 +149,11 @@ define([
                   type: 'bar',
                   settings: {
                     direction: 'down',
-                    fontSize: 14,
+                    fontSize: opts.fontSize || 12,
                     fontFamily: 'Arial',
-                    align: 'align' in opts ? opts.align : 0.5,
-                    labels: [{
+                    //align: 'align' in opts ? opts.align : 0.5,
+                    align: 0.5,
+                     labels: [{
                       placements: [
                         {
                           position: 'opposite', // 'inside' | 'outside' | 'opposite'
@@ -148,9 +166,8 @@ define([
                           fill: '#fff'
                         }
                       ],
-                      label: function label(d) {
-                        //console.log(d);
-                        return (d.data.end.label);
+                      label({ data }) {
+                        return data ? data.end.label : '';
                       }
                     }]
                   }
@@ -202,6 +219,20 @@ define([
                   })
                 }
               }
+            },
+            brush: {
+                trigger: [{
+                  on: 'tap',
+                  contexts: ['highlight'],
+                }],
+                consume: [{
+                  context: 'highlight',
+                  style: {
+                    inactive: {
+                      opacity: 0.3
+                    }
+                  }
+                }]
             }
           };
         }
@@ -392,6 +423,8 @@ define([
                         scale: 'color',
                         dock: 'right',
                       }),
+                      labels({ c: 'bars'
+                      }),
                       //     This is for Sequential legend
                       //      type: 'legend-seq',
                       //     settings: {
@@ -416,7 +449,7 @@ define([
                         type: 'text',
                         text: layout.qHyperCube.qDimensionInfo[0].qFallbackTitle,
                         dock: 'bottom',
-                        anchor: 'left'
+                        // anchor: 'left'
                       },
 
                         box({ id: 'bars',
@@ -434,7 +467,7 @@ define([
                           fill: '#12724d',
                           size: 0.3
                         }),
-                        labels({ c: 'bars' }),
+
                       ],
                   }
               })
@@ -465,4 +498,3 @@ define([
             }
         }
     })
-

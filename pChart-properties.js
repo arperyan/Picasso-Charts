@@ -43,9 +43,28 @@ define([], function() {
           }
         }
       }
-    }
+    },
   };
 
+  var about = {
+    ref: "about",
+    label: "About",
+    type: "items",
+    items: {
+      Author: {
+        label: "Created by: Ryan Arpe",
+        component: "text"
+      },
+      Colaborator: {
+        label: "Colaborator: Ralf Becher",
+        component: "text"
+      },
+      Version: {
+        label: "Version: v1.0",
+        component: "text"
+      }
+    }
+  };
 	// ****************************************************************************************
 	// Return values
 	// ****************************************************************************************
@@ -57,8 +76,8 @@ define([], function() {
 			dimensions: dimensions,
       measures: measures,
       sorting: sorting,
-			sectionAppearance: sectionAppearance
-
+			sectionAppearance: sectionAppearance,
+      about: about
 		//	sectionInteractivity: sectionInteractivity
 
 		}
