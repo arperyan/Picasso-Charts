@@ -17,9 +17,9 @@ define([], function() {
 				component: "slider",
 				label: "Bar Width",
 				ref: "qDef.barWidth",
-				min: 0,
+				min: 0.4,
 				max: 2,
-		    step: 0.5,
+		    step: 0.2,
 				defaultValue: 1
       }
     }
