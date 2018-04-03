@@ -21,13 +21,7 @@ define([], function() {
 				max: 2,
 		    step: 0.5,
 				defaultValue: 1
-      },
-      MyNumProp: {
-				type: "number",
-				label: "Maximum",
-				ref: "qDef.barWidth",
-				defaultValue: 1
-			}
+      }
     }
 	};
 
@@ -104,4 +98,3 @@ define([], function() {
 		}
 	}
 })
-
