@@ -522,10 +522,15 @@ define([
                   }
               })
 
-              this.chartBrush = this.chart.brush('highlight')
-              this.chartBrush.on('update', (added, removed) => {
-                  const selections = [].concat(added, removed).map(v => v.values[0])
-                  this.selectValues(0, selections, true)
+              var scope = $element.scope();
+
+              var chartBrush = this.chart.brush('highlight')
+              chartBrush.on('update', (added, removed) => {
+                  var selections = [].concat(added, removed).map(v => v.values[0]).filter(e => {return e > -1;});
+                  console.log(scope, selections);
+                  if (selections.length > 0) {
+                    scope.selectValues(0, selections, true);
+                  }
               });
 
               // this.chartBrush = this.chart.brush('selection')
