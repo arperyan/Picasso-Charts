@@ -12,24 +12,30 @@ define([], function() {
 		min: 1,
 		max: 2,
     items: {
-      barwidth: {
+      innerwidth: {
         type: "number",
 				component: "slider",
 				label: function(d) {
-          return "Bar Width (" + d.qDef.barWidth +"px)";
+          return "Bar Distance (" + d.qDef.innerWidth +"px)";
         },
-				ref: "qDef.barWidth",
+				ref: "qDef.innerWidth",
 				min: 0,
-				max: 2,
-		    step: 0.5,
-				defaultValue: 1
+				max: 0.8,
+		    step: 0.1,
+				defaultValue: 0.2
       },
-      MyNumProp: {
-				type: "number",
-				label: "Maximum",
-				ref: "qDef.barWidth",
-				defaultValue: 1
-			}
+      innerwidth: {
+        type: "number",
+				component: "slider",
+				label: function(d) {
+          return "Bar Outer Distance (" + d.qDef.outerWidth +"px)";
+        },
+				ref: "qDef.outerWidth",
+				min: 0,
+				max: 0.8,
+		    step: 0.1,
+				defaultValue: 0.2
+      },
     }
 	};
 

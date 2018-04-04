@@ -30,7 +30,7 @@ define([
                 minor: { scale: 'measure' },
                 box: {
                     fill: opts.fill,
-                    width: opts.width
+                    width: 1
                 }
             },
             brush: {
@@ -341,6 +341,64 @@ define([
           };
         }
 
+        var xheader = function (opts) {
+          return {
+            type: 'text',
+            key: opts.id,
+            text: opts.text,
+            dock: 'left'
+          };
+        }
+
+        var yheader = function (opts) {
+          return {
+            type: 'text',
+            key: opts.id,
+            text: opts.text,
+            dock: 'bottom'
+          };
+        }
+
+        var range = function (opts) {
+          return {
+            type: 'brush-range',
+            key: opts.id,
+            displayOrder: 3,
+            settings: {
+              brush: 'highlight',
+              scale: 'dimension',
+              direction: 'horizontal',
+              bubbles: {  // Optional
+                show: true,
+                align: 'start' // Where to anchor bubble [start|end] // Optional
+              },
+              target: {
+                component: 'x-axis'
+              }
+            },
+            formatter: 'myFormatter',
+              style: {
+                bubble: {  // Optional
+                  fontSize: 16, // Optional
+                  fontFamily: 'Arial', // Optional
+                  fill: '#ff0000', // Optional
+                  color: '#fff', // Optional
+                  stroke: '#000'/* string */, // Optional
+                  strokeWidth: 3, // Optional
+                  borderRadius: 3, // Optional
+                },
+                target: {  // Optional
+                  fill: 'limegreen', // Optional
+                  opacity: '0.2'
+                },
+                line: {  // Optional
+                  stroke: '#ff0000',
+                  strokeWidth: 3 // Optional
+                }
+              }
+          };
+        }
+
         return {
             definition: properties,
             initialProperties: {
@@ -354,10 +412,13 @@ define([
             paint: function ($element, layout) {
 
             var measureProp0 = layout.qHyperCube.qMeasureInfo[0];
+            var measureProp1 = layout.qHyperCube.qMeasureInfo[1];
 
             var measureLabels = layout.qHyperCube.qMeasureInfo.map(function(d) {
                         		return d.qFallbackTitle;
                         	});
+
+            var dimLabel = layout.qHyperCube.qDimensionInfo[0].qFallbackTitle;
 
             this.chart = picasso.chart({
                   element: $element[0],
@@ -405,63 +466,42 @@ define([
                       }],
                       components: [
                         yaxis({id: 'y-axis'}),
-                        xaxis({id: 'x-axis'}),
-                      {
-                        type: 'text',
-                        text: measureLabels.join(', '),
-                        dock: 'left'
-                      },
-                      {
-                        type: 'text',
-                        displayOrder: 5,
-                        text: layout.qHyperCube.qDimensionInfo[0].qFallbackTitle,
-                        dock: 'bottom',
-                        // anchor: 'left'
-                      },
-                      {
-                        type: 'brush-range',
-                        key: 'brushrange',
-                        displayOrder: 3,
-                        settings: {
-                          brush: 'highlight',
-                          scale: 'dimension',
-                          direction: 'horizontal',
-                          bubbles: {  // Optional
-                            show: true,
-                            align: 'start' // Where to anchor bubble [start|end] // Optional
-                          },
-                          target: {
-                            component: 'x-axis'
-                          }
-                        },
-                        formatter: 'myFormatter',
-                          style: {
-                            bubble: {  // Optional
-                              fontSize: 16, // Optional
-                              fontFamily: 'Arial', // Optional
-                              fill: '#ff0000', // Optional
-                              color: '#fff', // Optional
-                              stroke: '#000'/* string */, // Optional
-                              strokeWidth: 3, // Optional
-                              borderRadius: 3, // Optional
-                            },
-                            target: {  // Optional
-                              fill: 'limegreen', // Optional
-                              opacity: '0.2'
-                            },
-                            line: {  // Optional
-                              stroke: '#ff0000',
-                              strokeWidth: 3 // Optional
-                            }
-                          }
-                      },
-                      legend({
-                        type: 'legend-cat',
-                        scale: 'color',
-                        dock: 'right',
-                      }),
-                      labels({ c: 'bars'
-                      }),
+                        xaxis({
+                          id: 'x-axis',
+                          text: measureLabels.join(', ')
+                        }),
+                        yheader({
+                          id: 'y-header',
+                          text: dimLabel
+                        }),
+                        xheader({id: 'x-header'}),
+                        range({id: 'brushrange'}),
+                        legend({
+                          type: 'legend-cat',
+                          scale: 'color',
+                          dock: 'right',
+                        }),
+                        labels({ c: 'bars'
+                        }),
+                        grid({id: 'gridline'}),
+                        box({ id: 'bars',
+                          start: 0,
+                          end: { field: 'qMeasureInfo/0' },
+                          fill: { scale: 'color'}
+                        }),
+                        // line({ id: 'lines',
+                        //   line: { field: 'qMeasureInfo/1' },
+                        //   stroke: '#00ff1d'
+                        // }),
+                        // point({ id: 'p',
+                        //   dot: { field: 'qMeasureInfo/1' },
+                        //   fill: '#12724d',
+                        //   size: 0.3
+                        // }),
+
+
+
+
                       //     This is for Sequential legend
                       //      type: 'legend-seq',
                       //     settings: {
@@ -476,22 +516,7 @@ define([
                       //     }
                       // },
 
-                        grid({id: 'gridline'}),
-                        box({ id: 'bars',
-                          start: 0,
-                          end: { field: 'qMeasureInfo/0' },
-                          width: measureProp0.barWidth,
-                          fill: { scale: 'color'}
-                        }),
-                        // line({ id: 'lines',
-                        //   line: { field: 'qMeasureInfo/1' },
-                        //   stroke: '#00ff1d'
-                        // }),
-                        // point({ id: 'p',
-                        //   dot: { field: 'qMeasureInfo/1' },
-                        //   fill: '#12724d',
-                        //   size: 0.3
-                        // }),
+
 
                       ],
                   }
