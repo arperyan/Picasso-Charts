@@ -15,6 +15,7 @@ define([
           return  {
             type: 'box',
             key: opts.id,
+            displayOrder: 1,
             data: {
                 extract: {
                     field: 'qDimensionInfo/0',
@@ -94,7 +95,7 @@ define([
           return {
             key: opts.id,
             type: 'point',
-            displayOrder: 3,
+            displayOrder: 2,
             data: {
               extract: {
                 field: 'qDimensionInfo/0',
@@ -241,6 +242,7 @@ define([
           return {
             type: 'grid-line',
             key: opts.id,
+            displayOrder: 0,
             // x: {
             //   scale: 'dimension'
             // },
@@ -283,7 +285,9 @@ define([
                       scales: {
                           dimension: {
                               data: { extract: { field: 'qDimensionInfo/0' } },
-                              padding: 0.2
+                              //padding: 0.1,
+                              paddingInner: 0.2,
+                              paddingOuter: 0.2
                           },
                           measure: {
                               data: { fields: ['qMeasureInfo/0','qMeasureInfo/1']},
@@ -328,42 +332,69 @@ define([
                           scale: 'measure',
                           settings: {
                             labels: {
-                              show: true,
-                              mode: 'auto', // Control how labels arrange themself. Availabe modes are `auto`, `horizontal`, `layered` and `tilted`. When set to `auto` the axis determines the best possible layout in the current context
-                              //maxGlyphCount: 10,
+                               show: true,
+                               //mode: 'auto', // Control how labels arrange themself. Availabe modes are `auto`, `horizontal`, `layered` and `tilted`. When set to `auto` the axis determines the best possible layout in the current context
+                                //maxGlyphCount: 10,
                               // tiltAngle: 35
-                              //margin: 10
+                                //margin: 10
+                                margin: 4, // Space in pixels between the tick and label. // Optional
+                                maxLengthPx: 150, // Max length of labels in pixels // Optional
+                                minLengthPx: 0, // Min length of labels in pixels. Labels will always at least require this much space // Optional
+                                align: 0.5, // Align act as a slider for the text bounding rect over the item bandwidth, given that the item have a bandwidth. // Optional
+                                offset: 0 //
                             },
                             ticks: {
                               show: false, // Toggle ticks on/off // Optional
                               margin: 0, // Space in pixels between the ticks and the line. // Optional
                               tickSize: 4, // Size of the ticks in pixels. // Optional
                             },
+                            minorTicks: {
+                              show: false, // Toggle minor-ticks on/off // Optional
+                              tickSize: 3, // Size of the ticks in pixels. // Optional
+                              margin: 0, // Space in pixels between the ticks and the line. // Optional
+                            },
                             line: {
                               show: false, // Toggle line on/off // Optional
-                            }
+                            },
+                            paddingStart: 0, // Padding in direction perpendicular to the axis // Optional
+                            paddingEnd: 10, // Padding in direction perpendicular to the axis // Optional
+                            align: 'auto' // Set the anchoring point of the axis. Avaialable options are `auto/left/right/bottom/top`. In `auto` the axis determines the best option. The options are restricted based on the axis orientation, a vertical axis may only anchor on `left` or `right` // Optional
                           }
-                      }, {
+                        }, {
                         type: 'axis',
                         scale: 'dimension',
                         key: 'x-axis',
                         dock: 'bottom',
                         settings: {
                           labels: {
-                            show: true,
-                              mode: 'auto', // Control how labels arrange themself. Availabe modes are `auto`, `horizontal`, `layered` and `tilted`. When set to `auto` the axis determines the best possible layout in the current context
+                             show: true,
+                              //mode: 'auto', // Control how labels arrange themself. Availabe modes are `auto`, `horizontal`, `layered` and `tilted`. When set to `auto` the axis determines the best possible layout in the current context
                               //maxGlyphCount: 10,
                             // tiltAngle: 35
                               //margin: 10
+                              margin: 4, // Space in pixels between the tick and label. // Optional
+                              maxLengthPx: 150, // Max length of labels in pixels // Optional
+                              minLengthPx: 0, // Min length of labels in pixels. Labels will always at least require this much space // Optional
+                              align: 0.5, // Align act as a slider for the text bounding rect over the item bandwidth, given that the item have a bandwidth. // Optional
+                              offset: 0 //
                           },
                           ticks: {
                             show: false, // Toggle ticks on/off // Optional
                             margin: 0, // Space in pixels between the ticks and the line. // Optional
                             tickSize: 4, // Size of the ticks in pixels. // Optional
                           },
+                          minorTicks: {
+                            show: false, // Toggle minor-ticks on/off // Optional
+                            tickSize: 3, // Size of the ticks in pixels. // Optional
+                            margin: 0, // Space in pixels between the ticks and the line. // Optional
+                          },
                           line: {
                             show: false, // Toggle line on/off // Optional
-                          }
+                          },
+                          paddingStart: 0, // Padding in direction perpendicular to the axis // Optional
+                          paddingEnd: 10, // Padding in direction perpendicular to the axis // Optional
+                          align: 'auto' // Set the anchoring point of the axis. Avaialable options are `auto/left/right/bottom/top`. In `auto` the axis determines the best option. The options are restricted based on the axis orientation, a vertical axis may only anchor on `left` or `right` // Optional
+
                         }//,
                         /////------------ Use this option to highlight the x-axis when the range brusihing is swithced off
                         // brush: {
@@ -382,13 +413,25 @@ define([
                         // }
                       },
                       {
+                        type: 'text',
+                        text: measureLabels.join(', '),
+                        dock: 'left'
+                      },
+                      {
+                        type: 'text',
+                        displayOrder: 5,
+                        text: layout.qHyperCube.qDimensionInfo[0].qFallbackTitle,
+                        dock: 'bottom',
+                        // anchor: 'left'
+                      },
+                      {
                         type: 'brush-range',
                         key: 'brushrange',
+                        displayOrder: 3,
                         settings: {
                           brush: 'highlight',
                           scale: 'dimension',
                           direction: 'horizontal',
-                          // displayOrder: 3,
                           bubbles: {  // Optional
                             show: true,
                             align: 'start' // Where to anchor bubble [start|end] // Optional
@@ -440,18 +483,6 @@ define([
                       // },
 
                         grid({id: 'gridline'}),
-                      {
-                        type: 'text',
-                        text: measureLabels.join(', '),
-                        dock: 'left'
-                      },
-                      {
-                        type: 'text',
-                        text: layout.qHyperCube.qDimensionInfo[0].qFallbackTitle,
-                        dock: 'bottom',
-                        // anchor: 'left'
-                      },
-
                         box({ id: 'bars',
                           start: 0,
                           end: { field: 'qMeasureInfo/0' },
