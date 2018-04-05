@@ -1,6 +1,6 @@
 define([
     './pChart-properties',
-    './node_modules/picasso.js/dist/picasso.min',
+    './node_modules/picasso.js/dist/picasso',
     './node_modules/picasso-plugin-q/dist/picasso-q.min',
     './node_modules/picasso-plugin-hammer/dist/picasso-hammer.min'
 
@@ -29,9 +29,13 @@ define([
                 major: { scale: 'dimension' },
                 minor: { scale: 'measure' },
                 box: {
+                    show: true,
                     fill: opts.fill,
-                    width: 1
-                }
+                    width: 1,
+                    stroke: '#fff', // Optional
+                    strokeWidth: 1, // Optional
+                },
+
             },
             brush: {
               trigger: [{
@@ -73,8 +77,17 @@ define([
               },
               layers: {
                 curve: 'monotone', //// cardinal, linear
+                show: true,
                 line: {
-                  stroke: opts.stroke
+                  stroke: opts.stroke,
+                  show: true,
+                  strokeWidth: 4,
+                  opacity: 1
+                },
+                area: {
+                  fill: '#ccc', // Optional
+                  opacity: 0.8, // Optional
+                  show: false, // Optional
                 }
               }
             },
@@ -95,7 +108,7 @@ define([
           return {
             key: opts.id,
             type: 'point',
-            displayOrder: 2,
+            displayOrder: 3,
             data: {
               extract: {
                 field: 'qDimensionInfo/0',
@@ -174,6 +187,16 @@ define([
                   }
                 }
               }]
+            },
+            brush: {
+              consume: [{
+                  context: 'highlight',
+                  style: {
+                    inactive: {
+                      opacity: 0.3
+                    }
+                  }
+                }]
             }
           };
         }
@@ -259,6 +282,16 @@ define([
               show: true,
               stroke: 'blue',
               strokeWidth: 2
+            },
+            brush: {
+              consume: [{
+                  context: 'highlight',
+                  style: {
+                    inactive: {
+                      opacity: 0.3
+                    }
+                  }
+                }]
             }
           };
         }
@@ -434,8 +467,8 @@ define([
                                 paddingOuter: measureProp0.outerWidth
                             },
                             measure: {
-                                //data: { fields: ['qMeasureInfo/0','qMeasureInfo/1']},
-                                data: { field: 'qMeasureInfo/0'},
+                                data: { fields: ['qMeasureInfo/0','qMeasureInfo/1']},
+                                //data: { field: 'qMeasureInfo/0'},
                                 invert: true,
                                 expand: 0.1,
                                 min: 0,
@@ -463,14 +496,25 @@ define([
                                   },
                                   rangeend: function(e) {
                                     this.chart.component('brushrange').emit('rangeEnd', e);
+                                  },
+                                  rangeclear: function(e) {
+                                    this.chart.component('brushrange').emit('rangeClear', e);
                                   }
                                 }
                               }]
                         }],
                         components: [
+                          labels({ c: 'bars'}),
                           yaxis({id: 'y-axis'}),
                           xaxis({id: 'x-axis'
                           }),
+                          range({id: 'brushrange'}),
+                          legend({
+                            type: 'legend-cat',
+                            scale: 'color',
+                            dock: 'right',
+                          }),
+                          grid({id: 'gridline'}),
                           yheader({
                             id: 'y-header',
                             text: dimLabel
@@ -479,29 +523,22 @@ define([
                             id: 'x-header',
                             text: measureLabels.join(', ')
                           }),
-                          range({id: 'brushrange'}),
-                          legend({
-                            type: 'legend-cat',
-                            scale: 'color',
-                            dock: 'right',
-                          }),
-                          labels({ c: 'bars'
-                          }),
-                          grid({id: 'gridline'}),
                           box({ id: 'bars',
                             start: 0,
                             end: { field: 'qMeasureInfo/0' },
                             fill: { scale: 'color'}
                           }),
-                          // line({ id: 'lines',
-                          //   line: { field: 'qMeasureInfo/1' },
-                          //   stroke: '#00ff1d'
-                          // }),
-                          // point({ id: 'p',
-                          //   dot: { field: 'qMeasureInfo/1' },
-                          //   fill: '#12724d',
-                          //   size: 0.3
-                          // }),
+                          line({ id: 'lines',
+                            line: { field: 'qMeasureInfo/1' },
+                            stroke: '#ff0000'
+                          }),
+                          point({ id: 'p',
+                            dot: { field: 'qMeasureInfo/1' },
+                            fill: '#12724d',
+                            size: 0.3
+                          }),
+
+
                         //     This is for Sequential legend
                         //      type: 'legend-seq',
                         //     settings: {

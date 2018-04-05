@@ -1,6 +1,6 @@
 define([
     './pChart-properties',
-    './node_modules/picasso.js/dist/picasso.min',
+    './node_modules/picasso.js/dist/picasso',
     './node_modules/picasso-plugin-q/dist/picasso-q.min',
     './node_modules/picasso-plugin-hammer/dist/picasso-hammer.min'
 
@@ -30,8 +30,9 @@ define([
                 minor: { scale: 'measure' },
                 box: {
                     fill: opts.fill,
-                    width: opts.width
-                }
+                    width: 1
+                },
+                orientation: 'vertical'
             },
             brush: {
               trigger: [{
@@ -95,7 +96,7 @@ define([
           return {
             key: opts.id,
             type: 'point',
-            displayOrder: 2,
+            displayOrder: 3,
             data: {
               extract: {
                 field: 'qDimensionInfo/0',
@@ -174,6 +175,16 @@ define([
                   }
                 }
               }]
+            },
+            brush: {
+              consume: [{
+                  context: 'highlight',
+                  style: {
+                    inactive: {
+                      opacity: 0.3
+                    }
+                  }
+                }]
             }
           };
         }
@@ -184,6 +195,7 @@ define([
             key: 'leg',
             scale: opts.scale,
             dock: opts.dock,
+            displayOrder: 1,
             settings: {
               layout: {  // Optional
                 size: 1, // Maximum number of columns (vertical) or rows (horizontal) // Optional
@@ -258,7 +270,154 @@ define([
               show: true,
               stroke: 'blue',
               strokeWidth: 2
+            },
+            brush: {
+              consume: [{
+                  context: 'highlight',
+                  style: {
+                    inactive: {
+                      opacity: 0.3
+                    }
+                  }
+                }]
             }
+          };
+        }
+
+        var yaxis = function (opts) {
+          return  {
+              type: 'axis',
+              key: opts.id,
+              dock: 'left',
+              scale: 'measure',
+              settings: {
+                labels: {
+                   show: true,
+                   //mode: 'auto', // Control how labels arrange themself. Availabe modes are `auto`, `horizontal`, `layered` and `tilted`. When set to `auto` the axis determines the best possible layout in the current context
+                    //maxGlyphCount: 10,
+                  // tiltAngle: 35
+                    //margin: 10
+                    margin: 4, // Space in pixels between the tick and label. // Optional
+                    maxLengthPx: 150, // Max length of labels in pixels // Optional
+                    minLengthPx: 0, // Min length of labels in pixels. Labels will always at least require this much space // Optional
+                    align: 0.5, // Align act as a slider for the text bounding rect over the item bandwidth, given that the item have a bandwidth. // Optional
+                    offset: 0 //
+                },
+                ticks: {
+                  show: false, // Toggle ticks on/off // Optional
+                  margin: 0, // Space in pixels between the ticks and the line. // Optional
+                  tickSize: 4, // Size of the ticks in pixels. // Optional
+                },
+                minorTicks: {
+                  show: false, // Toggle minor-ticks on/off // Optional
+                  tickSize: 3, // Size of the ticks in pixels. // Optional
+                  margin: 0, // Space in pixels between the ticks and the line. // Optional
+                },
+                line: {
+                  show: false, // Toggle line on/off // Optional
+                },
+                paddingStart: 0, // Padding in direction perpendicular to the axis // Optional
+                paddingEnd: 10, // Padding in direction perpendicular to the axis // Optional
+                align: 'auto' // Set the anchoring point of the axis. Avaialable options are `auto/left/right/bottom/top`. In `auto` the axis determines the best option. The options are restricted based on the axis orientation, a vertical axis may only anchor on `left` or `right` // Optional
+              }
+            };
+        }
+
+        var xaxis = function (opts) {
+          return {
+            type: 'axis',
+            scale: 'dimension',
+            key: opts.id,
+            dock: 'bottom',
+            settings: {
+              labels: {
+                 show: true,
+                  //mode: 'auto', // Control how labels arrange themself. Availabe modes are `auto`, `horizontal`, `layered` and `tilted`. When set to `auto` the axis determines the best possible layout in the current context
+                  //maxGlyphCount: 10,
+                // tiltAngle: 35
+                  //margin: 10
+                  margin: 4, // Space in pixels between the tick and label. // Optional
+                  maxLengthPx: 150, // Max length of labels in pixels // Optional
+                  minLengthPx: 0, // Min length of labels in pixels. Labels will always at least require this much space // Optional
+                  align: 0.5, // Align act as a slider for the text bounding rect over the item bandwidth, given that the item have a bandwidth. // Optional
+                  offset: 0 //
+              },
+              ticks: {
+                show: false, // Toggle ticks on/off // Optional
+                margin: 0, // Space in pixels between the ticks and the line. // Optional
+                tickSize: 4, // Size of the ticks in pixels. // Optional
+              },
+              minorTicks: {
+                show: false, // Toggle minor-ticks on/off // Optional
+                tickSize: 3, // Size of the ticks in pixels. // Optional
+                margin: 0, // Space in pixels between the ticks and the line. // Optional
+              },
+              line: {
+                show: false, // Toggle line on/off // Optional
+              },
+              paddingStart: 0, // Padding in direction perpendicular to the axis // Optional
+              paddingEnd: 10, // Padding in direction perpendicular to the axis // Optional
+              align: 'auto' // Set the anchoring point of the axis. Avaialable options are `auto/left/right/bottom/top`. In `auto` the axis determines the best option. The options are restricted based on the axis orientation, a vertical axis may only anchor on `left` or `right` // Optional
+
+            }
+          };
+        }
+
+        var xheader = function (opts) {
+          return {
+            type: 'text',
+            key: opts.id,
+            text: opts.text,
+            dock: 'left'
+          };
+        }
+
+        var yheader = function (opts) {
+          return {
+            type: 'text',
+            key: opts.id,
+            text: opts.text,
+            dock: 'bottom'
+          };
+        }
+
+        var range = function (opts) {
+          return {
+            type: 'brush-range',
+            key: opts.id,
+            displayOrder: 5,
+            settings: {
+              brush: 'highlight',
+              scale: 'dimension',
+              direction: 'horizontal',
+              bubbles: {  // Optional
+                show: true,
+                align: 'start' // Where to anchor bubble [start|end] // Optional
+              },
+              target: {
+                component: 'x-axis',
+              }
+            },
+            formatter: 'myFormatter',
+              style: {
+                bubble: {  // Optional
+                  fontSize: 16, // Optional
+                  fontFamily: 'Arial', // Optional
+                  fill: '#ff0000', // Optional
+                  color: '#fff', // Optional
+                  stroke: '#000'/* string */, // Optional
+                  strokeWidth: 3, // Optional
+                  borderRadius: 3, // Optional
+                },
+                target: {  // Optional
+                  fill: 'limegreen', // Optional
+                  opacity: '0.2'
+                },
+                line: {  // Optional
+                  stroke: '#ff0000',
+                  strokeWidth: 3 // Optional
+                }
+              }
           };
         }
 
@@ -274,240 +433,136 @@ define([
             },
             paint: function ($element, layout) {
 
+            //var dimProp      = layout.qHyperCube.qDimensionInfo[0]
+            var measureProp0 = layout.qHyperCube.qMeasureInfo[0];
+            var measureProp1 = layout.qHyperCube.qMeasureInfo[1];
 
             var measureLabels = layout.qHyperCube.qMeasureInfo.map(function(d) {
                         		return d.qFallbackTitle;
                         	});
 
-            this.chart = picasso.chart({
-                  element: $element[0],
-                  settings: {
-                      scales: {
-                          dimension: {
-                              data: { extract: { field: 'qDimensionInfo/0' } },
-                              //padding: 0.1,
-                              paddingInner: 0.2,
-                              paddingOuter: 0.2
-                          },
-                          measure: {
-                              data: { fields: ['qMeasureInfo/0','qMeasureInfo/1']},
-                              invert: true,
-                              expand: 0.1,
-                              min: 0,
-                              include: [0]
-                          },
-                          color: {
-                              data:  { extract: { field: 'qDimensionInfo/0' } } ,
-                              type: 'color'
-                              // range: ['red', 'blue']
+            var dimLabel = layout.qHyperCube.qDimensionInfo[0].qFallbackTitle;
 
-                          },
-
-                      },
-                      interactions: [{
-                            type: 'hammer',
-                            gestures: [{
-                              type: 'Pan',
-                              options: {
-                                event: 'range',
-                                // direction: Hammer.DIRECTION_VERTICAL,
-                              },
-                              events: {
-                                rangestart: function(e) {
-                                  this.chart.component('brushrange').emit('rangeStart', e);
-                                },
-                                rangemove: function(e) {
-                                  this.chart.component('brushrange').emit('rangeMove', e);
-                                },
-                                rangeend: function(e) {
-                                  this.chart.component('brushrange').emit('rangeEnd', e);
-                                }
-                              }
-                            }]
-                      }],
-                      components: [{
-                          type: 'axis',
-                          key: 'y-axis',
-                          dock: 'left',
-                          scale: 'measure',
-                          settings: {
-                            labels: {
-                               show: true,
-                               //mode: 'auto', // Control how labels arrange themself. Availabe modes are `auto`, `horizontal`, `layered` and `tilted`. When set to `auto` the axis determines the best possible layout in the current context
-                                //maxGlyphCount: 10,
-                              // tiltAngle: 35
-                                //margin: 10
-                                margin: 4, // Space in pixels between the tick and label. // Optional
-                                maxLengthPx: 150, // Max length of labels in pixels // Optional
-                                minLengthPx: 0, // Min length of labels in pixels. Labels will always at least require this much space // Optional
-                                align: 0.5, // Align act as a slider for the text bounding rect over the item bandwidth, given that the item have a bandwidth. // Optional
-                                offset: 0 //
+            //if(layout.qHyperCube.qMeasureInfo.length === 1) {
+              this.chart = picasso.chart({
+                    element: $element[0],
+                    settings: {
+                        scales: {
+                            dimension: {
+                                data: { extract: { field: 'qDimensionInfo/0' } },
+                                //padding: 0.1,
+                                paddingInner: measureProp0.innerWidth,
+                                paddingOuter: measureProp0.outerWidth
                             },
-                            ticks: {
-                              show: false, // Toggle ticks on/off // Optional
-                              margin: 0, // Space in pixels between the ticks and the line. // Optional
-                              tickSize: 4, // Size of the ticks in pixels. // Optional
+                            measure: {
+                                data: { fields: ['qMeasureInfo/0','qMeasureInfo/1']},
+                                //data: { field: 'qMeasureInfo/0'},
+                                invert: true,
+                                expand: 0.1,
+                                min: 0,
+                                include: [0]
                             },
-                            minorTicks: {
-                              show: false, // Toggle minor-ticks on/off // Optional
-                              tickSize: 3, // Size of the ticks in pixels. // Optional
-                              margin: 0, // Space in pixels between the ticks and the line. // Optional
+                            color: {
+                                data:  { extract: { field: 'qDimensionInfo/0' } } ,
+                                type: 'color'
                             },
-                            line: {
-                              show: false, // Toggle line on/off // Optional
-                            },
-                            paddingStart: 0, // Padding in direction perpendicular to the axis // Optional
-                            paddingEnd: 10, // Padding in direction perpendicular to the axis // Optional
-                            align: 'auto' // Set the anchoring point of the axis. Avaialable options are `auto/left/right/bottom/top`. In `auto` the axis determines the best option. The options are restricted based on the axis orientation, a vertical axis may only anchor on `left` or `right` // Optional
-                          }
-                        }, {
-                        type: 'axis',
-                        scale: 'dimension',
-                        key: 'x-axis',
-                        dock: 'bottom',
-                        settings: {
-                          labels: {
-                             show: true,
-                              //mode: 'auto', // Control how labels arrange themself. Availabe modes are `auto`, `horizontal`, `layered` and `tilted`. When set to `auto` the axis determines the best possible layout in the current context
-                              //maxGlyphCount: 10,
-                            // tiltAngle: 35
-                              //margin: 10
-                              margin: 4, // Space in pixels between the tick and label. // Optional
-                              maxLengthPx: 150, // Max length of labels in pixels // Optional
-                              minLengthPx: 0, // Min length of labels in pixels. Labels will always at least require this much space // Optional
-                              align: 0.5, // Align act as a slider for the text bounding rect over the item bandwidth, given that the item have a bandwidth. // Optional
-                              offset: 0 //
-                          },
-                          ticks: {
-                            show: false, // Toggle ticks on/off // Optional
-                            margin: 0, // Space in pixels between the ticks and the line. // Optional
-                            tickSize: 4, // Size of the ticks in pixels. // Optional
-                          },
-                          minorTicks: {
-                            show: false, // Toggle minor-ticks on/off // Optional
-                            tickSize: 3, // Size of the ticks in pixels. // Optional
-                            margin: 0, // Space in pixels between the ticks and the line. // Optional
-                          },
-                          line: {
-                            show: false, // Toggle line on/off // Optional
-                          },
-                          paddingStart: 0, // Padding in direction perpendicular to the axis // Optional
-                          paddingEnd: 10, // Padding in direction perpendicular to the axis // Optional
-                          align: 'auto' // Set the anchoring point of the axis. Avaialable options are `auto/left/right/bottom/top`. In `auto` the axis determines the best option. The options are restricted based on the axis orientation, a vertical axis may only anchor on `left` or `right` // Optional
-
-                        }//,
-                        /////------------ Use this option to highlight the x-axis when the range brusihing is swithced off
-                        // brush: {
-                        //   trigger: [{
-                        //     on: 'tap',
-                        //     contexts: ['highlight']
-                        //   }],
-                        //   consume: [{
-                        //     context: 'highlight',
-                        //     style: {
-                        //       inactive: {
-                        //         opacity: 0.3
-                        //       }
-                        //     }
-                        //   }]
-                        // }
-                      },
-                      {
-                        type: 'text',
-                        text: measureLabels.join(', '),
-                        dock: 'left'
-                      },
-                      {
-                        type: 'text',
-                        displayOrder: 5,
-                        text: layout.qHyperCube.qDimensionInfo[0].qFallbackTitle,
-                        dock: 'bottom',
-                        // anchor: 'left'
-                      },
-                      {
-                        type: 'brush-range',
-                        key: 'brushrange',
-                        displayOrder: 3,
-                        settings: {
-                          brush: 'highlight',
-                          scale: 'dimension',
-                          direction: 'horizontal',
-                          bubbles: {  // Optional
-                            show: true,
-                            align: 'start' // Where to anchor bubble [start|end] // Optional
-                          },
-                          target: {
-                            component: 'x-axis'
-                          }
                         },
-                        formatter: 'myFormatter',
-                          style: {
-                            bubble: {  // Optional
-                              fontSize: 16, // Optional
-                              fontFamily: 'Arial', // Optional
-                              fill: '#ff0000', // Optional
-                              color: '#fff', // Optional
-                              stroke: '#000'/* string */, // Optional
-                              strokeWidth: 3, // Optional
-                              borderRadius: 3, // Optional
-                            },
-                            target: {  // Optional
-                              fill: 'limegreen', // Optional
-                              opacity: '0.2'
-                            },
-                            line: {  // Optional
-                              stroke: '#ff0000',
-                              strokeWidth: 3 // Optional
-                            }
-                          }
-                      },
-                      legend({
-                        type: 'legend-cat',
-                        scale: 'color',
-                        dock: 'right',
-                      }),
-                      labels({ c: 'bars'
-                      }),
-                      //     This is for Sequential legend
-                      //      type: 'legend-seq',
-                      //     settings: {
-                      //       fill: 'color',
-                      //       major: 'linear-scale',
-                      //       // tick: {
-                      //       //   label: (tickValue, index) => {
-                      //       //     const temp = ['Hot', 'Cold'];
-                      //       //     return temp[index % 2];
-                      //       //   },
-                      //       // }
-                      //     }
-                      // },
+                        interactions: [{
+                              type: 'hammer',
+                              gestures: [{
+                                type: 'Pan',
+                                options: {
+                                  event: 'range',
+                                  // direction: Hammer.DIRECTION_VERTICAL,
+                                },
+                                events: {
+                                  rangestart: function(e) {
+                                    this.chart.component('brushrange').emit('rangeStart', e);
+                                  },
+                                  rangemove: function(e) {
+                                    this.chart.component('brushrange').emit('rangeMove', e);
+                                  },
+                                  rangeend: function(e) {
+                                    this.chart.component('brushrange').emit('rangeEnd', e);
+                                  },
+                                  rangeclear: function(e) {
+                                    this.chart.component('brushrange').emit('rangeClear', e);
+                                  }
+                                }
+                              }]
+                        }],
+                        components: [
+                          labels({ c: 'bars'}),
+                          yaxis({id: 'y-axis'}),
+                          xaxis({id: 'x-axis'
+                          }),
+                          range({id: 'brushrange'}),
+                          legend({
+                            type: 'legend-cat',
+                            scale: 'color',
+                            dock: 'right',
+                          }),
+                          grid({id: 'gridline'}),
+                          yheader({
+                            id: 'y-header',
+                            text: dimLabel
+                          }),
+                          xheader({
+                            id: 'x-header',
+                            text: measureLabels.join(', ')
+                          }),
+                          box({ id: 'bars',
+                            start: 0,
+                            end: { field: 'qMeasureInfo/0' },
+                            fill: { scale: 'color'}
+                          }),
+                          line({ id: 'lines',
+                            line: { field: 'qMeasureInfo/1' },
+                            stroke: '#ff0000'
+                          }),
+                          point({ id: 'p',
+                            dot: { field: 'qMeasureInfo/1' },
+                            fill: '#12724d',
+                            size: 0.3
+                          }),
 
-                        grid({id: 'gridline'}),
-                        box({ id: 'bars',
-                          start: 0,
-                          end: { field: 'qMeasureInfo/0' },
-                          width: 1,
-                          fill: { scale: 'color'}
-                        }),
-                        line({ id: 'lines',
-                          line: { field: 'qMeasureInfo/1' },
-                          stroke: '#00ff1d'
-                        }),
-                        point({ id: 'p',
-                          dot: { field: 'qMeasureInfo/1' },
-                          fill: '#12724d',
-                          size: 0.3
-                        }),
 
-                      ],
+                        //     This is for Sequential legend
+                        //      type: 'legend-seq',
+                        //     settings: {
+                        //       fill: 'color',
+                        //       major: 'linear-scale',
+                        //       // tick: {
+                        //       //   label: (tickValue, index) => {
+                        //       //     const temp = ['Hot', 'Cold'];
+                        //       //     return temp[index % 2];
+                        //       //   },
+                        //       // }
+                        //     }
+                        // },
+                        ],
+                      }
+                  })
+              // } else {   bring in later
+              //
+              // }
+
+              var scope = $element.scope();
+
+              var chartBrush = this.chart.brush('highlight')
+              chartBrush.on('update', (added, removed) => {
+                  var selections = [].concat(added, removed).map(v => v.values[0]).filter(e => {return e > -1;});
+                  //console.log(scope, selections);
+                  if (selections.length > 0) {
+                    scope.selectValues(0, selections, true);
                   }
-              })
-
-              this.chartBrush = this.chart.brush('highlight')
-              this.chartBrush.on('update', (added, removed) => {
-                  const selections = [].concat(added, removed).map(v => v.values[0])
-                  this.selectValues(0, selections, true)
               });
+
+              // this.chartBrush = this.chart.brush('selection')
+              // this.chartBrush.on('update', (added, removed) => {
+              //     const selections = [].concat(added, removed).map(v => v.values[0])
+              //     this.selectValues(0, selections, true)
+              // });
 
               // this.chartBrush = this.chart.brush('selection')
               // this.chartBrush.on('update', (added, removed) => {
