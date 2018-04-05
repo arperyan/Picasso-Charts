@@ -184,6 +184,7 @@ define([
             key: 'leg',
             scale: opts.scale,
             dock: opts.dock,
+            displayOrder: 1,
             settings: {
               layout: {  // Optional
                 size: 1, // Maximum number of columns (vertical) or rows (horizontal) // Optional
@@ -363,7 +364,7 @@ define([
           return {
             type: 'brush-range',
             key: opts.id,
-            displayOrder: 3,
+            displayOrder: 5,
             settings: {
               brush: 'highlight',
               scale: 'dimension',
@@ -373,7 +374,7 @@ define([
                 align: 'start' // Where to anchor bubble [start|end] // Optional
               },
               target: {
-                component: 'x-axis'
+                component: 'x-axis',
               }
             },
             formatter: 'myFormatter',
@@ -411,6 +412,7 @@ define([
             },
             paint: function ($element, layout) {
 
+            //var dimProp      = layout.qHyperCube.qDimensionInfo[0]
             var measureProp0 = layout.qHyperCube.qMeasureInfo[0];
             var measureProp1 = layout.qHyperCube.qMeasureInfo[1];
 
@@ -420,118 +422,122 @@ define([
 
             var dimLabel = layout.qHyperCube.qDimensionInfo[0].qFallbackTitle;
 
-            this.chart = picasso.chart({
-                  element: $element[0],
-                  settings: {
-                      scales: {
-                          dimension: {
-                              data: { extract: { field: 'qDimensionInfo/0' } },
-                              //padding: 0.1,
-                              paddingInner: 0.1,
-                              paddingOuter: 0.2
-                          },
-                          measure: {
-                              //data: { fields: ['qMeasureInfo/0','qMeasureInfo/1']},
-                              data: { field: 'qMeasureInfo/0'},
-                              invert: true,
-                              expand: 0.1,
-                              min: 0,
-                              include: [0]
-                          },
-                          color: {
-                              data:  { extract: { field: 'qDimensionInfo/0' } } ,
-                              type: 'color'
-                          },
-                      },
-                      interactions: [{
-                            type: 'hammer',
-                            gestures: [{
-                              type: 'Pan',
-                              options: {
-                                event: 'range',
-                                // direction: Hammer.DIRECTION_VERTICAL,
-                              },
-                              events: {
-                                rangestart: function(e) {
-                                  this.chart.component('brushrange').emit('rangeStart', e);
+            //if(layout.qHyperCube.qMeasureInfo.length === 1) {
+              this.chart = picasso.chart({
+                    element: $element[0],
+                    settings: {
+                        scales: {
+                            dimension: {
+                                data: { extract: { field: 'qDimensionInfo/0' } },
+                                //padding: 0.1,
+                                paddingInner: measureProp0.innerWidth,
+                                paddingOuter: measureProp0.outerWidth
+                            },
+                            measure: {
+                                //data: { fields: ['qMeasureInfo/0','qMeasureInfo/1']},
+                                data: { field: 'qMeasureInfo/0'},
+                                invert: true,
+                                expand: 0.1,
+                                min: 0,
+                                include: [0]
+                            },
+                            color: {
+                                data:  { extract: { field: 'qDimensionInfo/0' } } ,
+                                type: 'color'
+                            },
+                        },
+                        interactions: [{
+                              type: 'hammer',
+                              gestures: [{
+                                type: 'Pan',
+                                options: {
+                                  event: 'range',
+                                  // direction: Hammer.DIRECTION_VERTICAL,
                                 },
-                                rangemove: function(e) {
-                                  this.chart.component('brushrange').emit('rangeMove', e);
-                                },
-                                rangeend: function(e) {
-                                  this.chart.component('brushrange').emit('rangeEnd', e);
+                                events: {
+                                  rangestart: function(e) {
+                                    this.chart.component('brushrange').emit('rangeStart', e);
+                                  },
+                                  rangemove: function(e) {
+                                    this.chart.component('brushrange').emit('rangeMove', e);
+                                  },
+                                  rangeend: function(e) {
+                                    this.chart.component('brushrange').emit('rangeEnd', e);
+                                  }
                                 }
-                              }
-                            }]
-                      }],
-                      components: [
-                        yaxis({id: 'y-axis'}),
-                        xaxis({
-                          id: 'x-axis',
-                          text: measureLabels.join(', ')
-                        }),
-                        yheader({
-                          id: 'y-header',
-                          text: dimLabel
-                        }),
-                        xheader({id: 'x-header'}),
-                        range({id: 'brushrange'}),
-                        legend({
-                          type: 'legend-cat',
-                          scale: 'color',
-                          dock: 'right',
-                        }),
-                        labels({ c: 'bars'
-                        }),
-                        grid({id: 'gridline'}),
-                        box({ id: 'bars',
-                          start: 0,
-                          end: { field: 'qMeasureInfo/0' },
-                          fill: { scale: 'color'}
-                        }),
-                        // line({ id: 'lines',
-                        //   line: { field: 'qMeasureInfo/1' },
-                        //   stroke: '#00ff1d'
-                        // }),
-                        // point({ id: 'p',
-                        //   dot: { field: 'qMeasureInfo/1' },
-                        //   fill: '#12724d',
-                        //   size: 0.3
-                        // }),
-
-
-
-
-                      //     This is for Sequential legend
-                      //      type: 'legend-seq',
-                      //     settings: {
-                      //       fill: 'color',
-                      //       major: 'linear-scale',
-                      //       // tick: {
-                      //       //   label: (tickValue, index) => {
-                      //       //     const temp = ['Hot', 'Cold'];
-                      //       //     return temp[index % 2];
-                      //       //   },
-                      //       // }
-                      //     }
-                      // },
-
-
-
-                      ],
-                  }
-              })
+                              }]
+                        }],
+                        components: [
+                          yaxis({id: 'y-axis'}),
+                          xaxis({id: 'x-axis'
+                          }),
+                          yheader({
+                            id: 'y-header',
+                            text: dimLabel
+                          }),
+                          xheader({
+                            id: 'x-header',
+                            text: measureLabels.join(', ')
+                          }),
+                          range({id: 'brushrange'}),
+                          legend({
+                            type: 'legend-cat',
+                            scale: 'color',
+                            dock: 'right',
+                          }),
+                          labels({ c: 'bars'
+                          }),
+                          grid({id: 'gridline'}),
+                          box({ id: 'bars',
+                            start: 0,
+                            end: { field: 'qMeasureInfo/0' },
+                            fill: { scale: 'color'}
+                          }),
+                          // line({ id: 'lines',
+                          //   line: { field: 'qMeasureInfo/1' },
+                          //   stroke: '#00ff1d'
+                          // }),
+                          // point({ id: 'p',
+                          //   dot: { field: 'qMeasureInfo/1' },
+                          //   fill: '#12724d',
+                          //   size: 0.3
+                          // }),
+                        //     This is for Sequential legend
+                        //      type: 'legend-seq',
+                        //     settings: {
+                        //       fill: 'color',
+                        //       major: 'linear-scale',
+                        //       // tick: {
+                        //       //   label: (tickValue, index) => {
+                        //       //     const temp = ['Hot', 'Cold'];
+                        //       //     return temp[index % 2];
+                        //       //   },
+                        //       // }
+                        //     }
+                        // },
+                        ],
+                      }
+                  })
+              // } else {   bring in later
+              //
+              // }
 
               var scope = $element.scope();
 
               var chartBrush = this.chart.brush('highlight')
               chartBrush.on('update', (added, removed) => {
                   var selections = [].concat(added, removed).map(v => v.values[0]).filter(e => {return e > -1;});
-                  console.log(scope, selections);
+                  //console.log(scope, selections);
                   if (selections.length > 0) {
                     scope.selectValues(0, selections, true);
                   }
               });
+
+              // this.chartBrush = this.chart.brush('selection')
+              // this.chartBrush.on('update', (added, removed) => {
+              //     const selections = [].concat(added, removed).map(v => v.values[0])
+              //     this.selectValues(0, selections, true)
+              // });
 
               // this.chartBrush = this.chart.brush('selection')
               // this.chartBrush.on('update', (added, removed) => {
