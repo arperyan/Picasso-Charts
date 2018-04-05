@@ -29,11 +29,12 @@ define([
                 major: { scale: 'dimension' },
                 minor: { scale: 'measure' },
                 box: {
-                    show: true,
+                    show: opts.show,
                     fill: opts.fill,
+                    opacity: opts.opacity,
                     width: 1,
-                    stroke: '#fff', // Optional
-                    strokeWidth: 1, // Optional
+                    stroke: '#000', // Optional
+                    strokeWidth: opts.strokeWidth, // Optional
                 },
 
             },
@@ -300,7 +301,7 @@ define([
           return  {
               type: 'axis',
               key: opts.id,
-              dock: 'left',
+              dock: opts.dock,
               scale: 'measure',
               settings: {
                 labels: {
@@ -475,8 +476,9 @@ define([
                                 include: [0]
                             },
                             color: {
-                                data:  { extract: { field: 'qDimensionInfo/0' } } ,
-                                type: 'color'
+                                data:  { field: 'qMeasureInfo/0' },
+                                type: 'sequential-color',
+                                range: measureProp0.colorPalette//'color'
                             },
                         },
                         interactions: [{
@@ -505,7 +507,10 @@ define([
                         }],
                         components: [
                           labels({ c: 'bars'}),
-                          yaxis({id: 'y-axis'}),
+                          yaxis({
+                            id: 'y-axis',
+                            dock: measureProp0.orientation
+                          }),
                           xaxis({id: 'x-axis'
                           }),
                           range({id: 'brushrange'}),
@@ -526,7 +531,10 @@ define([
                           box({ id: 'bars',
                             start: 0,
                             end: { field: 'qMeasureInfo/0' },
-                            fill: { scale: 'color'}
+                            show: true,
+                            fill: { scale: 'color'},//{ scale: 'color'},
+                            strokeWidth: measureProp0.barWidth,
+                            opacity: measureProp0.barOpacity
                           }),
                           line({ id: 'lines',
                             line: { field: 'qMeasureInfo/1' },

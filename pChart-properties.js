@@ -1,4 +1,4 @@
-define([], function() {
+define(["./colors"], function(colors) {
 
   var dimensions = {
       uses: "dimensions",
@@ -36,7 +36,11 @@ define([], function() {
           labelPlacement: "bottom",
           label: "Line"
           }
-        ]
+        ],
+        // change: function (layout) {
+        //   if (layout.qDef.chartStyle === "line")
+        //     layout.qDef.barWidth = 0;
+        //}
       },
       axis: {
         type: "string",
@@ -49,8 +53,7 @@ define([], function() {
   						value: "right",
   						label: "Secondary Axis"
   				}],
-				defaultValue: "left"
-		  },
+			},
       barDist: {
         type: "items",
         items: {
@@ -104,21 +107,100 @@ define([], function() {
       				defaultValue: false,
               show: function (layout) {
                 return layout.qDef.chartStyle === "bar";
+              },
+              change: function (layout) {
+                if (layout.qDef.border === false)
+                  layout.qDef.barWidth = 0;
               }
             },
             borderwidth: {
               type: "integer",
-              grouped: true,
-        			label: "Minimum",
+              label: "Stroke Width",
         			ref: "qDef.barWidth",
-        			defaultValue: "10",
+        			defaultValue: "0",
+              max: "10",
         			show: function (layout) {
-                return layout.qDef.border === true;
+                return layout.qDef.border === true && layout.qDef.chartStyle === "bar";
+              }
+            }
+          },
+
+        },
+        barColor: {
+          type: "items",
+          items: {
+            paletteItems: {
+  						ref: "qDef.colorPalette",
+  						type: "string",
+  						component: "item-selection-list",
+  						defaultValue: "qlik10",
+  						items: [
+                {
+    						icon: "",
+    						label: "Qlik Sense",
+    						component: "color-scale",
+    						reverse: function (d) {
+    							return d.qDef.colors.reverse;
+    						},
+    						value: "qlik10",
+    						type: "sequential",
+    						colors: colors.qlik10,
+              }, {
+  							icon: "",
+  							label: "Qlik Sense 100",
+  							component: "color-scale",
+  							reverse: function (d) {
+  								return d.qDef.colors.reverse;
+  							},
+  							value: "qlik100",
+  							type: "sequential",
+  							colors: colors.qlik100,
+  						}, {
+  							icon: "",
+  							label: "d3 category 10",
+  							component: "color-scale",
+  							reverse: function (d) {
+  								return d.qDef.colors.reverse;
+  							},
+  							value: "category10",
+  							type: "sequential",
+  							colors: colors.category10,
+  						}, {
+  							icon: "",
+  							label: "d3 category 20",
+  							component: "color-scale",
+  							reverse: function (d) {
+  								return d.qDef.colors.reverse;
+  							},
+  							value: "category20",
+  							type: "sequential",
+  							colors: colors.category20,
+  						}
+            ],
+  					},
+            reverseColors: {
+  						type: "boolean",
+  						ref: "qDef.colors.reverse",
+  						label: "Reverse Colors",
+  						defaultValue: false,
+  					},
+            barOpac: {
+              type: "number",
+              component: "slider",
+              label: function(d) {
+                return "Bar Opacity (" + Math.floor(d.qDef.barOpacity * 100) +"%)";
+              },
+              ref: "qDef.barOpacity",
+              min: 0.1,
+              max: 1,
+              step: 0.1,
+              defaultValue: 1,
+              show: function (layout) {
+                return layout.qDef.chartStyle === "bar";
               }
             }
           }
         }
-
     }
 	};
 
