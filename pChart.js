@@ -2,10 +2,10 @@ define([
     './pChart-properties',
     './node_modules/picasso.js/dist/picasso',
     './node_modules/picasso-plugin-q/dist/picasso-q.min',
-    './node_modules/picasso-plugin-hammer/dist/picasso-hammer.min'
-
+    './node_modules/picasso-plugin-hammer/dist/picasso-hammer.min',
+    './colors'
 ],
-    function (properties, picasso, pq, picassoHammer) {
+    function (properties, picasso, pq, picassoHammer, colors) {
 
         picasso.use(pq)
         picasso.renderer.prio(['canvas'])
@@ -33,7 +33,7 @@ define([
                     fill: opts.fill,
                     opacity: opts.opacity,
                     width: 1,
-                    stroke: '#000', // Optional
+                    stroke: opts.stroke, // Optional
                     strokeWidth: opts.strokeWidth, // Optional
                 },
 
@@ -77,7 +77,7 @@ define([
                 minor: { scale: 'measure', ref: 'line' }
               },
               layers: {
-                curve: 'monotone', //// cardinal, linear
+                curve: opts.curve, //// cardinal, linear
                 show: true,
                 line: {
                   stroke: opts.stroke,
@@ -447,16 +447,32 @@ define([
             paint: function ($element, layout) {
 
             //var dimProp      = layout.qHyperCube.qDimensionInfo[0]
-            var measureProp0 = layout.qHyperCube.qMeasureInfo[0];
-            var measureProp1 = layout.qHyperCube.qMeasureInfo[1];
+            var measureProp0 = layout.qHyperCube.qMeasureInfo[0],
+                measureProp1 = layout.qHyperCube.qMeasureInfo[1],
+                measureLabels = layout.qHyperCube.qMeasureInfo.map(function(d) {
+                        		        return d.qFallbackTitle;
+                                }),
+                dimLabel = layout.qHyperCube.qDimensionInfo[0].qFallbackTitle,
+                colorSchema = measureProp0.colorSchema;
 
-            var measureLabels = layout.qHyperCube.qMeasureInfo.map(function(d) {
-                        		return d.qFallbackTitle;
-                        	});
 
-            var dimLabel = layout.qHyperCube.qDimensionInfo[0].qFallbackTitle;
+
+            // var linebar = if(measureProp0.chartStyle === 'bar') {
+            //   return true;
+            // } else {
+            //   return false;
+            // }
+
+            // var qMeaColorUser = layout.qHyperCube.qMeasureInfo.map(function(d){
+      			// 		var m = typeof d.colorPalette !== "undefined" ? d.colorPalette : {};
+      			// 		return {
+      			// 			cat: typeof m.cat !== "undefined" ? m.cat : 'picasso1',
+      			// 		}
+      			// });
+
 
             //if(layout.qHyperCube.qMeasureInfo.length === 1) {
+
               this.chart = picasso.chart({
                     element: $element[0],
                     settings: {
@@ -476,9 +492,15 @@ define([
                                 include: [0]
                             },
                             color: {
-                                data:  { field: 'qMeasureInfo/0' },
-                                type: 'sequential-color',
-                                range: measureProp0.colorPalette//'color'
+                              data: { field: 'qMeasureInfo/0' },
+                              type: 'color',
+                              range: colors.colorSchema,
+                              nice: true,
+                              //type: 'threshold-color'
+
+                                // data:  { fields: ['qMeasureInfo/0','qMeasureInfo/1']},
+                                // type: 'categorical-color',
+                                // range: ['red', 'blue'],//measureProp0.colorPalette//'color'
                             },
                         },
                         interactions: [{
@@ -532,8 +554,9 @@ define([
                             start: 0,
                             end: { field: 'qMeasureInfo/0' },
                             show: true,
-                            fill: { scale: 'color'},//{ scale: 'color'},
+                            fill: { scale: 'color', ref: 'end'},//{ scale: 'color'},
                             strokeWidth: measureProp0.barWidth,
+                            stroke: measureProp0.barColor.color,
                             opacity: measureProp0.barOpacity
                           }),
                           line({ id: 'lines',

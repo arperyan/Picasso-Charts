@@ -110,15 +110,25 @@ define(["./colors"], function(colors) {
               },
               change: function (layout) {
                 if (layout.qDef.border === false)
-                  layout.qDef.barWidth = 0;
+                  layout.qDef.barWidth = 0; //& layout.qDef.barColor = "#000";
               }
             },
             borderwidth: {
               type: "integer",
               label: "Stroke Width",
         			ref: "qDef.barWidth",
-        			defaultValue: "0",
+        			defaultValue: "1",
               max: "10",
+        			show: function (layout) {
+                return layout.qDef.border === true && layout.qDef.chartStyle === "bar";
+              }
+            },
+            bordercolor: {
+              type: "object",
+              label: "Stroke Color",
+              ref: "qDef.barColor",
+              component: "color-picker",
+              defaultValue: "#000",
         			show: function (layout) {
                 return layout.qDef.border === true && layout.qDef.chartStyle === "bar";
               }
@@ -130,12 +140,22 @@ define(["./colors"], function(colors) {
           type: "items",
           items: {
             paletteItems: {
-  						ref: "qDef.colorPalette",
+  						ref: "qDef.colorSchema",
   						type: "string",
   						component: "item-selection-list",
-  						defaultValue: "qlik10",
+  						defaultValue: "picasso1",
   						items: [
                 {
+    						icon: "",
+    						label: "Picasso Cat",
+    						component: "color-scale",
+    						reverse: function (d) {
+    							return d.qDef.colors.reverse;
+    						},
+                value: "picasso1",
+    						type: "categorical",
+    						colors: colors.picasso1
+              }, {
     						icon: "",
     						label: "Qlik Sense",
     						component: "color-scale",
@@ -143,7 +163,7 @@ define(["./colors"], function(colors) {
     							return d.qDef.colors.reverse;
     						},
     						value: "qlik10",
-    						type: "sequential",
+    						type: "categorical",
     						colors: colors.qlik10,
               }, {
   							icon: "",

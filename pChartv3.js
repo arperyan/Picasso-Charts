@@ -2,10 +2,10 @@ define([
     './pChart-properties',
     './node_modules/picasso.js/dist/picasso',
     './node_modules/picasso-plugin-q/dist/picasso-q.min',
-    './node_modules/picasso-plugin-hammer/dist/picasso-hammer.min'
-
+    './node_modules/picasso-plugin-hammer/dist/picasso-hammer.min',
+    './colors'
 ],
-    function (properties, picasso, pq, picassoHammer) {
+    function (properties, picasso, pq, picassoHammer, colors) {
 
         picasso.use(pq)
         picasso.renderer.prio(['canvas'])
@@ -29,10 +29,14 @@ define([
                 major: { scale: 'dimension' },
                 minor: { scale: 'measure' },
                 box: {
+                    show: opts.show,
                     fill: opts.fill,
-                    width: 1
+                    opacity: opts.opacity,
+                    width: 1,
+                    stroke: opts.stroke, // Optional
+                    strokeWidth: opts.strokeWidth, // Optional
                 },
-                orientation: 'vertical'
+
             },
             brush: {
               trigger: [{
@@ -74,8 +78,17 @@ define([
               },
               layers: {
                 curve: 'monotone', //// cardinal, linear
+                show: true,
                 line: {
-                  stroke: opts.stroke
+                  stroke: opts.stroke,
+                  show: true,
+                  strokeWidth: 4,
+                  opacity: 1
+                },
+                area: {
+                  fill: '#ccc', // Optional
+                  opacity: 0.8, // Optional
+                  show: false, // Optional
                 }
               }
             },
@@ -288,7 +301,7 @@ define([
           return  {
               type: 'axis',
               key: opts.id,
-              dock: 'left',
+              dock: opts.dock,
               scale: 'measure',
               settings: {
                 labels: {
@@ -434,16 +447,24 @@ define([
             paint: function ($element, layout) {
 
             //var dimProp      = layout.qHyperCube.qDimensionInfo[0]
-            var measureProp0 = layout.qHyperCube.qMeasureInfo[0];
-            var measureProp1 = layout.qHyperCube.qMeasureInfo[1];
+            var measureProp0 = layout.qHyperCube.qMeasureInfo[0],
+                measureProp1 = layout.qHyperCube.qMeasureInfo[1],
+                measureLabels = layout.qHyperCube.qMeasureInfo.map(function(d) {
+                        		        return d.qFallbackTitle;
+                                }),
+                dimLabel = layout.qHyperCube.qDimensionInfo[0].qFallbackTitle,
+                colorSchema = measureProp0.colorSchema;
 
-            var measureLabels = layout.qHyperCube.qMeasureInfo.map(function(d) {
-                        		return d.qFallbackTitle;
-                        	});
+            // var qMeaColorUser = layout.qHyperCube.qMeasureInfo.map(function(d){
+      			// 		var m = typeof d.colorPalette !== "undefined" ? d.colorPalette : {};
+      			// 		return {
+      			// 			cat: typeof m.cat !== "undefined" ? m.cat : 'picasso1',
+      			// 		}
+      			// });
 
-            var dimLabel = layout.qHyperCube.qDimensionInfo[0].qFallbackTitle;
 
             //if(layout.qHyperCube.qMeasureInfo.length === 1) {
+
               this.chart = picasso.chart({
                     element: $element[0],
                     settings: {
@@ -463,8 +484,15 @@ define([
                                 include: [0]
                             },
                             color: {
-                                data:  { extract: { field: 'qDimensionInfo/0' } } ,
-                                type: 'color'
+                              data: { field: 'qMeasureInfo/0' },
+                              type: 'color',
+                              range: colors.colorSchema,
+                              nice: true,
+                              //type: 'threshold-color'
+
+                                // data:  { fields: ['qMeasureInfo/0','qMeasureInfo/1']},
+                                // type: 'categorical-color',
+                                // range: ['red', 'blue'],//measureProp0.colorPalette//'color'
                             },
                         },
                         interactions: [{
@@ -493,7 +521,10 @@ define([
                         }],
                         components: [
                           labels({ c: 'bars'}),
-                          yaxis({id: 'y-axis'}),
+                          yaxis({
+                            id: 'y-axis',
+                            dock: measureProp0.orientation
+                          }),
                           xaxis({id: 'x-axis'
                           }),
                           range({id: 'brushrange'}),
@@ -514,7 +545,11 @@ define([
                           box({ id: 'bars',
                             start: 0,
                             end: { field: 'qMeasureInfo/0' },
-                            fill: { scale: 'color'}
+                            show: true,
+                            fill: { scale: 'color', ref: 'end'},//{ scale: 'color'},
+                            strokeWidth: measureProp0.barWidth,
+                            stroke: measureProp0.barColor.color,
+                            opacity: measureProp0.barOpacity
                           }),
                           line({ id: 'lines',
                             line: { field: 'qMeasureInfo/1' },
