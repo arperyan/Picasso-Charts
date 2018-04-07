@@ -264,19 +264,11 @@ define(["./colors"], function(colors) {
     ref: "about",
     label: "About",
     type: "items",
-    items: {
-      Author: {
-        label: "Created by: Ryan Arpe",
-        component: "text"
-      },
-      Colaborator: {
-        label: "Colaborator: Ralf Becher",
-        component: "text"
-      },
-      Version: {
-        label: "Version: v1.0",
-        component: "text"
-      }
+    component: {
+        template: '<div><img src="../content/default/Arpe.png"  style="max-width:250px;"></div>' +
+        '<p style="font-size:10px; color: #7f7f7f; text-align:left;"><i>Created by: Ryan Arpe</i>' +
+        '<span style="font-size:10px; color: #7f7f7f; float:right; margin-right:10px"><i>v1.0</i></span></p>'+
+        '<div style="width:95%; font-size:10px; margin-right:10px; color: #7f7f7f; text-align: left"><i>Colaborator: Ralf Becher</i></div>'
     }
   };
 	// ****************************************************************************************

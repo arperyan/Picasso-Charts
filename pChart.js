@@ -453,24 +453,17 @@ define([
                         		        return d.qFallbackTitle;
                                 }),
                 dimLabel = layout.qHyperCube.qDimensionInfo[0].qFallbackTitle,
-                colorSchema = measureProp0.colorSchema;
+                colorSchema = typeof measureProp0.colorSchema !== 'undefined' ?  measureProp0.colorSchema : 'picasso1';
 
 
 
-            // var linebar = if(measureProp0.chartStyle === 'bar') {
-            //   return true;
-            // } else {
-            //   return false;
-            // }
-
-            // var qMeaColorUser = layout.qHyperCube.qMeasureInfo.map(function(d){
-      			// 		var m = typeof d.colorPalette !== "undefined" ? d.colorPalette : {};
-      			// 		return {
-      			// 			cat: typeof m.cat !== "undefined" ? m.cat : 'picasso1',
-      			// 		}
-      			// });
-
-
+                // var qMeaColorUser = layout.qHyperCube.qMeasureInfo.map(function(d){
+      					//        //var m = typeof d.colorSchema !== "undefined" ? d.colorSchema : {};
+      					//        return {
+      					// 	             cat: 'picasso1'
+      					//               }
+      			    //  });
+                //   console.log(qMeaColorUser);
             //if(layout.qHyperCube.qMeasureInfo.length === 1) {
 
               this.chart = picasso.chart({
@@ -494,7 +487,8 @@ define([
                             color: {
                               data: { field: 'qMeasureInfo/0' },
                               type: 'color',
-                              range: colors.colorSchema,
+                              range: colors[colorSchema],
+                              //range: ,//colors.colorSchema,
                               nice: true,
                               //type: 'threshold-color'
 
