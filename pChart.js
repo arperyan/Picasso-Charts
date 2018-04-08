@@ -14,7 +14,7 @@ define([
         var box = function (opts) {
           return  {
             type: 'box',
-            key: opts.id,
+            key: opts.id + 1,
             displayOrder: 1,
             data: {
                 extract: {
@@ -28,9 +28,9 @@ define([
             settings: {
                 major: {
                   scale: 'dimension',
-                  // fn: function(d) {
-                  //   return d.scale(d.datum.value) + 0.3 * d.scale.bandwidth() + 'qMeasureInfo/0' * d.scale.bandwidth() * 0.4;
-                  // }
+                  fn: function(d) {
+                     return d.scale(d.datum.value) + 0.01 * d.scale.bandwidth() + opts.id * d.scale.bandwidth() * 1.2;
+                  } //----- Works
                 },
                 minor: { scale: 'measure' },
                 orientation: opts.orientation,
@@ -86,14 +86,14 @@ define([
                 curve: opts.curve, //// cardinal, linear
                 line: {
                   stroke: opts.stroke,
-                  show: true,
+                  show: opts.show,
                   strokeWidth: opts.strokeWidth,
                   opacity: opts.opacity
                 },
                 area: {
                   fill: opts.afill, // Optional
                   opacity: opts.areaOpacity, // Optional
-                  show: opts.show, // Optional
+                  show: opts.ashow, // Optional
                 }
               }
             },
@@ -482,8 +482,20 @@ define([
                             dimension: {
                                 data: { extract: { field: 'qDimensionInfo/0' } },
                                 //padding: 0.1,
-                                paddingInner: layout.innerWidth,
-                                paddingOuter: layout.outerWidth
+                                paddingInner: function() {
+                                  if(measureProp1.chartStyle === 'bar') {
+                                    return 0.7;
+                                  } else {
+                                    return layout.innerWidth;
+                                  }
+                                },
+                                paddingOuter: function() {
+                                  if(measureProp1.chartStyle === 'bar') {
+                                    return 0.3;
+                                  } else {
+                                    return layout.outerWidth;
+                                  }
+                                }
                             },
                             measure: {
                                 data: { fields: ['qMeasureInfo/0','qMeasureInfo/1']},
@@ -533,7 +545,7 @@ define([
                           labels({ c: 'bars'}),
                           yaxis({
                             id: 'y-axis',
-                            dock: measureProp0.orientation
+                            dock: layout.orientation
                           }),
                           xaxis({id: 'x-axis'
                           }),
@@ -553,9 +565,9 @@ define([
                             text: measureLabels.join(', ')
                           }),
 
-                          box({ id: 'bars',
+                          box({ id: '0',
                             start: 0,
-                            end: { field: 'qMeasureInfo/0' },
+                            end: {field: 'qMeasureInfo/0'},
                             show: true,
                             fill: { scale: 'color', ref: 'end'},//{ scale: 'color'},
                             strokeWidth: measureProp0.barWidth,
@@ -563,13 +575,42 @@ define([
                             opacity: measureProp0.barOpacity,
                             orientation: measureProp0.barDirect
                           }),
+                          box({ id: '1',
+                            start: 0,
+                            end: { field: 'qMeasureInfo/1'},
+                            show: function() {
+                              if(measureProp1.chartStyle === 'bar') {
+                                return true;
+                              } else {
+                                return false;
+                              }
+                            },
+                            fill: { scale: 'color', ref: 'end'},//{ scale: 'color'},
+                            strokeWidth: measureProp1.barWidth,
+                            stroke: measureProp1.barColor.color,
+                            opacity: measureProp1.barOpacity,
+                            orientation: measureProp1.barDirect
+                          }),
                           line({ id: 'lines',
                             line: { field: 'qMeasureInfo/1' },
                             stroke: measureProp1.lineColor.color,
                             afill: measureProp1.areaColor.color,
                             strokeWidth: measureProp1.lineWidth,
                             curve: measureProp1.lineType,
-                            show: measureProp1.showArea,
+                            ashow: function() {
+                              if(measureProp1.showArea === true && measureProp1.chartStyle === 'line') {
+                                return true;
+                              } else {
+                                return false;
+                              }
+                            },
+                            show: function() {
+                              if(measureProp1.chartStyle === 'line') {
+                                return true;
+                              } else {
+                                return false;
+                              }
+                            },
                             areaOpacity: measureProp1.areaOpacity
 
                           }),
@@ -577,7 +618,14 @@ define([
                             dot: { field: 'qMeasureInfo/1' },
                             stroke: measureProp1.pstrokeColor.color,
                             fill: measureProp1.bubbleColor.color,
-                            show: measureProp1.showPoint,
+                            show: function() {
+                              if(measureProp1.showPoint === true && measureProp1.chartStyle === 'line') {
+                                return true;
+                              } else {
+                                return false;
+                              }
+                            },
+                            //show: false,
                             size: measureProp1.pointSize,
                             opacity: measureProp1.pointOpacity,
                             pstrokeWidth: measureProp1.pointStroke,

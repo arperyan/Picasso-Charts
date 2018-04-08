@@ -175,7 +175,7 @@ define(["./colors"], function(colors) {
               type: "boolean",
               label: "Tick points",
               ref: "qDef.showPoint",
-              defaultValue: true,
+              defaultValue: false,
               show: function (layout) {
                 return layout.qDef.chartStyle === "line";
               }
@@ -514,6 +514,9 @@ define(["./colors"], function(colors) {
                 max: 0.8,
                 step: 0.1,
                 defaultValue: 0.2,
+                show: function (layout) {
+                  return layout.qDef.chartStyle === "line";
+                }
               },
               outerwidth: {
                 type: "number",
@@ -526,6 +529,9 @@ define(["./colors"], function(colors) {
                 max: 1,
                 step: 0.2,
                 defaultValue: 0.2,
+                show: function (layout) {
+                  return layout.qDef.chartStyle === "line";
+                }
               }
           }
         }
