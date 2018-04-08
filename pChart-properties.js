@@ -42,51 +42,28 @@ define(["./colors"], function(colors) {
         //     layout.qDef.barWidth = 0;
         //}
       },
-      axis: {
-        type: "string",
-				component: "dropdown",
-				ref: "qDef.orientation",
-				options: [{
-  				value: "left",
-  						label: "Primary Axis"
-  				}, {
-  						value: "right",
-  						label: "Secondary Axis"
-  				}],
-			},
-      barDist: {
+      orient: {
         type: "items",
         items: {
-          innerwidth: {
-            type: "number",
-            component: "slider",
-            label: function(d) {
-              return "Bar Inner Distance (" + d.qDef.innerWidth +"px)";
-            },
-            ref: "qDef.innerWidth",
-            min: 0,
-            max: 0.8,
-            step: 0.1,
-            defaultValue: 0.2,
+          vertHori: {
+            type: "string",
+						component: "buttongroup",
+						label: "Bar Orientation",
+						ref: "qDef.barDirect",
+						options: [{
+							value: "vertical",
+							label: "Vertical",
+							tooltip: "Select for vertical"
+						}, {
+							value: "horizontal",
+							label: "Horizontal",
+							tooltip: "Select for horizontal"
+						}],
+						defaultValue: "vertical",
             show: function (layout) {
               return layout.qDef.chartStyle === "bar";
             }
-          },
-          outerwidth: {
-            type: "number",
-            component: "slider",
-            label: function(d) {
-              return "Bar Outer Distance (" + d.qDef.outerWidth +"px)";
-            },
-            ref: "qDef.outerWidth",
-            min: 0,
-            max: 1,
-            step: 0.2,
-            defaultValue: 0.2,
-            show: function (layout) {
-              return layout.qDef.chartStyle === "bar";
-            }
-          }
+					}
         }
       },
       barBorder: {
@@ -114,11 +91,17 @@ define(["./colors"], function(colors) {
               }
             },
             borderwidth: {
-              type: "integer",
               label: "Stroke Width",
         			ref: "qDef.barWidth",
-        			defaultValue: "1",
-              max: "10",
+              type: "number",
+              component: "slider",
+              label: function(d) {
+                return "Stroke Width (" + d.qDef.barWidth +"px)";
+              },
+              min: 0,
+              max: 10,
+              step: 1,
+              defaultValue: 0,
         			show: function (layout) {
                 return layout.qDef.border === true && layout.qDef.chartStyle === "bar";
               }
@@ -134,7 +117,170 @@ define(["./colors"], function(colors) {
               }
             }
           },
-
+        },
+        lineStroke: {
+          type: "items",
+          items: {
+             linethick: {
+                 type: "number",
+                 component: "slider",
+                 label: function(d) {
+                   return "Line Width (" + d.qDef.lineWidth +"px)";
+                 },
+                 ref: "qDef.lineWidth",
+                 min: 1,
+                 max: 10,
+                 step: 1,
+                 defaultValue: 2,
+                 show: function (layout) {
+                   return layout.qDef.chartStyle === "line";
+                 }
+              },
+              linecolor: {
+                type: "object",
+                label: "Line Color",
+                ref: "qDef.lineColor",
+                component: "color-picker",
+                dualOutput: true,
+                defaultValue: "#3d52a1",
+                show: function (layout) {
+                  return layout.qDef.chartStyle === "line";
+                }
+              },
+              lineType: {
+                type: "string",
+                component: "dropdown",
+                label: "Line Curve Style",
+                ref: "qDef.lineType",
+                options: [{
+                      value: "linear",
+                      label: "Linear"
+                  }, {
+                      value: "monotone",
+                      label: "Monotone"
+                  }, {
+                      value: "cardinal",
+                      label: "Cardinal"
+                  }],
+                  show: function (layout) {
+                    return layout.qDef.chartStyle === "line";
+                  }
+              }
+            }
+        },
+        showPoint: {
+          type: "items",
+          items: {
+            showPoint: {
+              type: "boolean",
+              label: "Tick points",
+              ref: "qDef.showPoint",
+              defaultValue: true,
+              show: function (layout) {
+                return layout.qDef.chartStyle === "line";
+              }
+            },
+            pointSize: {
+              type: "number",
+              component: "slider",
+              label: function(d) {
+                return "Bubble Size (" + Math.floor(d.qDef.pointSize *100) +"px)";
+              },
+              ref: "qDef.pointSize",
+              min: 0,
+              max: 1,
+              step: 0.2,
+              defaultValue: 0.4,
+              show: function (layout) {
+                return layout.qDef.chartStyle === "line" && layout.qDef.showPoint === true;
+              }
+            },
+            pointcolor: {
+              type: "object",
+              label: "Bubble Color",
+              ref: "qDef.bubbleColor",
+              dualOutput: true,
+              component: "color-picker",
+              defaultValue: "#3d52a1",
+              show: function (layout) {
+                return layout.qDef.chartStyle === "line" && layout.qDef.showPoint === true;
+              }
+            },
+            pointOpacity: {
+              type: "number",
+              component: "slider",
+              label: function(d) {
+                return "Bubble Opacity (" + Math.floor(d.qDef.pointOpacity *100) +"%)";
+              },
+              ref: "qDef.pointOpacity",
+              min: 0.2,
+              max: 1,
+              step: 0.2,
+              defaultValue: 0.6,
+              show: function (layout) {
+                return layout.qDef.chartStyle === "line" && layout.qDef.showPoint === true;
+              }
+            },
+            pointStroke: {
+                type: "number",
+                component: "slider",
+                label: function(d) {
+                  return "Stroke Width (" + d.qDef.pointStroke +"px)";
+                },
+                ref: "qDef.pointStroke",
+                min: 1,
+                max: 10,
+                step: 1,
+                defaultValue: 2,
+                show: function (layout) {
+                  return layout.qDef.chartStyle === "line" && layout.qDef.showPoint === true;
+                }
+             },
+             pstrokeColors: {
+               type: "object",
+               label: "Stroke Color",
+               ref: "qDef.pstrokeColor",
+               dualOutput: true,
+               component: "color-picker",
+               defaultValue: "#fff",
+               show: function (layout) {
+                 return layout.qDef.chartStyle === "line" && layout.qDef.showPoint === true;
+               }
+             },
+          }
+        },
+        Area: {
+          type: "items",
+          items: {
+            showArea: {
+              type: "boolean",
+              label: "Show Area",
+              ref: "qDef.showArea",
+              defaultValue: false,
+              show: function (layout) {
+                return layout.qDef.chartStyle === "line";
+              },
+              change: function (layout) {
+                if (layout.qDef.showArea === false)
+                  layout.qDef.areaOpacity = 0;
+              }
+            },
+            areaOpacity: {
+              type: "number",
+              component: "slider",
+              label: function(d) {
+                return "Opacity (" + Math.floor(d.qDef.areaOpacity *100) +"%)";
+              },
+              ref: "qDef.areaOpacity",
+              min: 0,
+              max: 1,
+              step: 0.2,
+              defaultValue: 0,
+              show: function (layout) {
+                return layout.qDef.chartStyle === "line" && layout.qDef.showArea === true;
+              },
+            }
+          }
         },
         barColor: {
           type: "items",
@@ -150,7 +296,7 @@ define(["./colors"], function(colors) {
     						label: "Picasso Cat",
     						component: "color-scale",
     						reverse: function (d) {
-    							return d.qDef.colors.reverse;
+    							return d.qDef.reverse;
     						},
                 value: "picasso1",
     						type: "categorical",
@@ -160,7 +306,7 @@ define(["./colors"], function(colors) {
     						label: "Qlik Sense",
     						component: "color-scale",
     						reverse: function (d) {
-    							return d.qDef.colors.reverse;
+    							return d.qDef.reverse;
     						},
     						value: "qlik10",
     						type: "categorical",
@@ -170,7 +316,7 @@ define(["./colors"], function(colors) {
   							label: "Qlik Sense 100",
   							component: "color-scale",
   							reverse: function (d) {
-  								return d.qDef.colors.reverse;
+  								return d.qDef.reverse;
   							},
   							value: "qlik100",
   							type: "sequential",
@@ -180,7 +326,7 @@ define(["./colors"], function(colors) {
   							label: "d3 category 10",
   							component: "color-scale",
   							reverse: function (d) {
-  								return d.qDef.colors.reverse;
+  								return d.qDef.reverse;
   							},
   							value: "category10",
   							type: "sequential",
@@ -190,37 +336,43 @@ define(["./colors"], function(colors) {
   							label: "d3 category 20",
   							component: "color-scale",
   							reverse: function (d) {
-  								return d.qDef.colors.reverse;
+  								return d.qDef.reverse;
   							},
   							value: "category20",
   							type: "sequential",
   							colors: colors.category20,
   						}
             ],
-  					},
-            reverseColors: {
-  						type: "boolean",
-  						ref: "qDef.colors.reverse",
-  						label: "Reverse Colors",
-  						defaultValue: false,
-  					},
-            barOpac: {
-              type: "number",
-              component: "slider",
-              label: function(d) {
-                return "Bar Opacity (" + Math.floor(d.qDef.barOpacity * 100) +"%)";
-              },
-              ref: "qDef.barOpacity",
-              min: 0.1,
-              max: 1,
-              step: 0.1,
-              defaultValue: 1,
-              show: function (layout) {
-                return layout.qDef.chartStyle === "bar";
-              }
+            show: function (layout) {
+              return layout.qDef.chartStyle === "bar"
+            }
+  				},
+          reverseColors: {
+            type: "boolean",
+            ref: "qDef.reverse",
+            label: "Reverse Colors",
+            defaultValue: false,
+            show: function (layout) {
+              return layout.qDef.chartStyle === "bar"
+            }
+          },
+          barOpac: {
+            type: "number",
+            component: "slider",
+            label: function(d) {
+              return "Bar Opacity (" + Math.floor(d.qDef.barOpacity * 100) +"%)";
+            },
+            ref: "qDef.barOpacity",
+            min: 0.1,
+            max: 1,
+            step: 0.1,
+            defaultValue: 1,
+            show: function (layout) {
+              return layout.qDef.chartStyle === "bar";
             }
           }
         }
+      }
     }
 	};
 
@@ -241,7 +393,7 @@ define(["./colors"], function(colors) {
         label: "Legend Type",
         type: "items",
         items: {
-          MyButtongroupProp: {
+          legendButton: {
                 type: "string",
                 component: "dropdown",
                 label: "",
@@ -254,10 +406,53 @@ define(["./colors"], function(colors) {
                   label: "Sequential legend",
                 }],
                 defaultValue: "Categorical legend"
+          },
+          axis: {
+            type: "string",
+            component: "dropdown",
+            label: "Axis Orientation",
+            ref: "orientation",
+            options: [{
+              value: "left",
+                  label: "Primary Axis"
+              }, {
+                  value: "right",
+                  label: "Secondary Axis"
+              }],
+          },
+          Dist: {
+            type: "items",
+            items: {
+              innerwidth: {
+                type: "number",
+                component: "slider",
+                label: function(d) {
+                  return "Inner Distance (" + d.innerWidth +"px)";
+                },
+                ref: "innerWidth",
+                min: 0,
+                max: 0.8,
+                step: 0.1,
+                defaultValue: 0.2,
+              },
+              outerwidth: {
+                type: "number",
+                component: "slider",
+                label: function(d) {
+                  return "Outer Distance (" + d.outerWidth +"px)";
+                },
+                ref: "outerWidth",
+                min: 0,
+                max: 1,
+                step: 0.2,
+                defaultValue: 0.2,
+              }
           }
         }
       }
-    },
+    }
+
+    }
   };
 
   var about = {

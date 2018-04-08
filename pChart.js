@@ -28,6 +28,7 @@ define([
             settings: {
                 major: { scale: 'dimension' },
                 minor: { scale: 'measure' },
+                orientation: opts.orientation,
                 box: {
                     show: opts.show,
                     fill: opts.fill,
@@ -78,17 +79,16 @@ define([
               },
               layers: {
                 curve: opts.curve, //// cardinal, linear
-                show: true,
                 line: {
                   stroke: opts.stroke,
                   show: true,
-                  strokeWidth: 4,
-                  opacity: 1
+                  strokeWidth: opts.strokeWidth,
+                  opacity: opts.opacity
                 },
                 area: {
                   fill: '#ccc', // Optional
-                  opacity: 0.8, // Optional
-                  show: false, // Optional
+                  opacity: opts.areaOpacity, // Optional
+                  show: opts.show, // Optional
                 }
               }
             },
@@ -110,6 +110,7 @@ define([
             key: opts.id,
             type: 'point',
             displayOrder: 3,
+            show: opts.show,
             data: {
               extract: {
                 field: 'qDimensionInfo/0',
@@ -123,9 +124,9 @@ define([
               y: { scale: 'measure', ref: 'dot' },
               fill: opts.fill,
               size: opts.size,
-              opacity: 0.8,
-              strokeWidth: 2,
-              stroke: "#fff",
+              opacity: opts.opacity,
+              strokeWidth: opts.pstrokeWidth,
+              stroke: opts.stroke,
             },
             brush: {
               trigger: [{
@@ -434,6 +435,8 @@ define([
           };
         }
 
+
+
         return {
             definition: properties,
             initialProperties: {
@@ -455,6 +458,7 @@ define([
                 dimLabel = layout.qHyperCube.qDimensionInfo[0].qFallbackTitle,
                 colorSchema = typeof measureProp0.colorSchema !== 'undefined' ?  measureProp0.colorSchema : 'picasso1';
 
+                //console.log(measureProp1.pointColor);
 
 
                 // var qMeaColorUser = layout.qHyperCube.qMeasureInfo.map(function(d){
@@ -473,8 +477,8 @@ define([
                             dimension: {
                                 data: { extract: { field: 'qDimensionInfo/0' } },
                                 //padding: 0.1,
-                                paddingInner: measureProp0.innerWidth,
-                                paddingOuter: measureProp0.outerWidth
+                                paddingInner: layout.innerWidth,
+                                paddingOuter: layout.outerWidth
                             },
                             measure: {
                                 data: { fields: ['qMeasureInfo/0','qMeasureInfo/1']},
@@ -488,7 +492,6 @@ define([
                               data: { field: 'qMeasureInfo/0' },
                               type: 'color',
                               range: colors[colorSchema],
-                              //range: ,//colors.colorSchema,
                               nice: true,
                               //type: 'threshold-color'
 
@@ -551,16 +554,26 @@ define([
                             fill: { scale: 'color', ref: 'end'},//{ scale: 'color'},
                             strokeWidth: measureProp0.barWidth,
                             stroke: measureProp0.barColor.color,
-                            opacity: measureProp0.barOpacity
+                            opacity: measureProp0.barOpacity,
+                            orientation: measureProp0.barDirect
                           }),
                           line({ id: 'lines',
                             line: { field: 'qMeasureInfo/1' },
-                            stroke: '#ff0000'
+                            //stroke: measureProp1.lineColor.color,
+                            strokeWidth: measureProp1.lineWidth,
+                            curve: measureProp1.lineType,
+                            show: measureProp1.showArea,
+                            areaOpacity: measureProp1.areaOpacity
                           }),
                           point({ id: 'p',
                             dot: { field: 'qMeasureInfo/1' },
-                            fill: '#12724d',
-                            size: 0.3
+                            stroke: measureProp1.pstrokeColor.color,
+                            fill: measureProp1.bubbleColor.color,
+                            show: measureProp1.showPoint,
+                            size: measureProp1.pointSize,
+                            opacity: measureProp1.pointOpacity,
+                            pstrokeWidth: measureProp1.pointStroke,
+
                           }),
 
 
