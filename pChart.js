@@ -115,7 +115,7 @@ define([
             key: opts.id,
             type: 'point',
             displayOrder: 3,
-            show: opts.show,
+            show: opts.pshow,
             data: {
               extract: {
                 field: 'qDimensionInfo/0',
@@ -465,7 +465,8 @@ define([
 
                 //console.log(measureProp1.pointColor);
 
-
+                console.log(measureProp1.showPoints);
+                console.log(measureProp1.chartStyle);
                 // var qMeaColorUser = layout.qHyperCube.qMeasureInfo.map(function(d){
       					//        //var m = typeof d.colorSchema !== "undefined" ? d.colorSchema : {};
       					//        return {
@@ -570,9 +571,9 @@ define([
                             end: {field: 'qMeasureInfo/0'},
                             show: true,
                             fill: { scale: 'color', ref: 'end'},//{ scale: 'color'},
-                            strokeWidth: measureProp0.barWidth,
                             stroke: measureProp0.barColor.color,
                             opacity: measureProp0.barOpacity,
+                            strokeWidth: measureProp0.barsWidth,
                             orientation: measureProp0.barDirect
                           }),
                           box({ id: '1',
@@ -586,9 +587,9 @@ define([
                               }
                             },
                             fill: { scale: 'color', ref: 'end'},//{ scale: 'color'},
-                            strokeWidth: measureProp1.barWidth,
                             stroke: measureProp1.barColor.color,
                             opacity: measureProp1.barOpacity,
+                            strokeWidth: measureProp1.barsWidth,
                             orientation: measureProp1.barDirect
                           }),
                           line({ id: 'lines',
@@ -616,20 +617,20 @@ define([
                           }),
                           point({ id: 'p',
                             dot: { field: 'qMeasureInfo/1' },
-                            stroke: measureProp1.pstrokeColor.color,
-                            fill: measureProp1.bubbleColor.color,
-                            show: function() {
-                              if(measureProp1.showPoint === true && measureProp1.chartStyle === 'line') {
+                            pshow: function() {
+                              if(measureProp1.showPoints === true && measureProp1.chartStyle === 'line') {
                                 return true;
                               } else {
                                 return false;
                               }
                             },
+                            stroke: measureProp1.pstrokeColor.color,
+                            fill: measureProp1.bubbleColor.color,
                             //show: false,
                             size: measureProp1.pointSize,
                             opacity: measureProp1.pointOpacity,
                             pstrokeWidth: measureProp1.pointStroke,
-
+                            //pshow: false
                           }),
 
 

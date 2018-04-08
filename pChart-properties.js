@@ -87,16 +87,16 @@ define(["./colors"], function(colors) {
               },
               change: function (layout) {
                 if (layout.qDef.border === false)
-                  layout.qDef.barWidth = 0; //& layout.qDef.barColor = "#000";
+                  layout.qDef.barsWidth = 0; //& layout.qDef.barColor = "#000";
               }
             },
             borderwidth: {
               label: "Stroke Width",
-        			ref: "qDef.barWidth",
+        			ref: "qDef.barsWidth",
               type: "number",
               component: "slider",
               label: function(d) {
-                return "Stroke Width (" + d.qDef.barWidth +"px)";
+                return "Stroke Width (" + d.qDef.barsWidth +"px)";
               },
               min: 0,
               max: 10,
@@ -171,10 +171,10 @@ define(["./colors"], function(colors) {
         showPoint: {
           type: "items",
           items: {
-            showPoint: {
+            tickPoint: {
               type: "boolean",
               label: "Tick points",
-              ref: "qDef.showPoint",
+              ref: "qDef.showPoints",
               defaultValue: false,
               show: function (layout) {
                 return layout.qDef.chartStyle === "line";
@@ -192,7 +192,7 @@ define(["./colors"], function(colors) {
               step: 0.2,
               defaultValue: 0.4,
               show: function (layout) {
-                return layout.qDef.chartStyle === "line" && layout.qDef.showPoint === true;
+                return layout.qDef.chartStyle === "line" && layout.qDef.showPoints === true;
               }
             },
             pointcolor: {
@@ -203,7 +203,7 @@ define(["./colors"], function(colors) {
               component: "color-picker",
               defaultValue: {color: "#3d52a1"},
               show: function (layout) {
-                return layout.qDef.chartStyle === "line" && layout.qDef.showPoint === true;
+                return layout.qDef.chartStyle === "line" && layout.qDef.showPoints === true;
               }
             },
             pointOpacity: {
@@ -218,7 +218,7 @@ define(["./colors"], function(colors) {
               step: 0.2,
               defaultValue: 0.6,
               show: function (layout) {
-                return layout.qDef.chartStyle === "line" && layout.qDef.showPoint === true;
+                return layout.qDef.chartStyle === "line" && layout.qDef.showPoints === true;
               }
             }
           }
@@ -238,7 +238,7 @@ define(["./colors"], function(colors) {
                 step: 1,
                 defaultValue: 2,
                 show: function (layout) {
-                  return layout.qDef.chartStyle === "line" && layout.qDef.showPoint === true;
+                  return layout.qDef.chartStyle === "line" && layout.qDef.showPoints === true;
                 }
              },
              pstrokeColors: {
@@ -249,7 +249,7 @@ define(["./colors"], function(colors) {
                component: "color-picker",
                defaultValue: {color: "#ffffff"},
                show: function (layout) {
-                 return layout.qDef.chartStyle === "line" && layout.qDef.showPoint === true;
+                 return layout.qDef.chartStyle === "line" && layout.qDef.showPoints === true;
                }
              }
            }
