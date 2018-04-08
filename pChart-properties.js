@@ -111,7 +111,7 @@ define(["./colors"], function(colors) {
               label: "Stroke Color",
               ref: "qDef.barColor",
               component: "color-picker",
-              defaultValue: "#000",
+              defaultValue: {color: "#000000"},
         			show: function (layout) {
                 return layout.qDef.border === true && layout.qDef.chartStyle === "bar";
               }
@@ -142,7 +142,7 @@ define(["./colors"], function(colors) {
                 ref: "qDef.lineColor",
                 component: "color-picker",
                 dualOutput: true,
-                defaultValue: "#3d52a1",
+                defaultValue: {color: "#3d52a1"},
                 show: function (layout) {
                   return layout.qDef.chartStyle === "line";
                 }
@@ -201,7 +201,7 @@ define(["./colors"], function(colors) {
               ref: "qDef.bubbleColor",
               dualOutput: true,
               component: "color-picker",
-              defaultValue: "#3d52a1",
+              defaultValue: {color: "#3d52a1"},
               show: function (layout) {
                 return layout.qDef.chartStyle === "line" && layout.qDef.showPoint === true;
               }
@@ -247,7 +247,7 @@ define(["./colors"], function(colors) {
                ref: "qDef.pstrokeColor",
                dualOutput: true,
                component: "color-picker",
-               defaultValue: "#fff",
+               defaultValue: defaultValue: {color: "#ffffff"},
                show: function (layout) {
                  return layout.qDef.chartStyle === "line" && layout.qDef.showPoint === true;
                }
@@ -276,7 +276,7 @@ define(["./colors"], function(colors) {
               ref: "qDef.areaColor",
               dualOutput: true,
               component: "color-picker",
-              defaultValue: "#ccc",
+              defaultValue: {color: "#cccccc"},
               show: function (layout) {
                 return layout.qDef.chartStyle === "line" && layout.qDef.showArea === true;
               }

@@ -506,7 +506,7 @@ define([
                                 include: [0]
                             },
                             color: {
-                              data: { field: 'qMeasureInfo/0' },
+                              data: { fields: ['qMeasureInfo/0','qMeasureInfo/1']},
                               type: 'color',
                               range: colors[colorSchema],
                               nice: true,
@@ -619,7 +619,7 @@ define([
                             stroke: measureProp1.pstrokeColor.color,
                             fill: measureProp1.bubbleColor.color,
                             show: function() {
-                              if(measureProp1.showPoint === true && measureProp1.chartStyle === 'line') {
+                              if(measureProp1.showPoint === true) {
                                 return true;
                               } else {
                                 return false;
