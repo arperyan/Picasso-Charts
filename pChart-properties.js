@@ -220,7 +220,12 @@ define(["./colors"], function(colors) {
               show: function (layout) {
                 return layout.qDef.chartStyle === "line" && layout.qDef.showPoint === true;
               }
-            },
+            }
+          }
+        },
+        pStroke: {
+          type: "items",
+          items: {
             pointStroke: {
                 type: "number",
                 component: "slider",
@@ -246,8 +251,8 @@ define(["./colors"], function(colors) {
                show: function (layout) {
                  return layout.qDef.chartStyle === "line" && layout.qDef.showPoint === true;
                }
-             },
-          }
+             }
+           }
         },
         Area: {
           type: "items",
@@ -263,6 +268,17 @@ define(["./colors"], function(colors) {
               change: function (layout) {
                 if (layout.qDef.showArea === false)
                   layout.qDef.areaOpacity = 0;
+              }
+            },
+            AreaColors: {
+              type: "object",
+              label: "Area Color",
+              ref: "qDef.areaColor",
+              dualOutput: true,
+              component: "color-picker",
+              defaultValue: "#ccc",
+              show: function (layout) {
+                return layout.qDef.chartStyle === "line" && layout.qDef.showArea === true;
               }
             },
             areaOpacity: {
@@ -285,6 +301,29 @@ define(["./colors"], function(colors) {
         barColor: {
           type: "items",
           items: {
+            usePalette: {
+  						ref: "qDef.usePalette",
+  						type: "string",
+  						label: "Colors",
+  						component: "dropdown",
+  						defaultValue: "categorical",
+  						options: [{
+  							value: "categorical",
+  							label: "Categorical"
+  						}, {
+  							value: "diverging",
+  							label: "Diverging"
+  						}, {
+  							value: "sequential",
+  							label: "Sequential"
+  						}, {
+  							value: "custom",
+  							label: "Custom"
+  						}],
+              show: function (layout) {
+                return layout.qDef.chartStyle === "bar";
+              }
+  					},
             paletteItems: {
   						ref: "qDef.colorSchema",
   						type: "string",
@@ -300,8 +339,37 @@ define(["./colors"], function(colors) {
     						},
                 value: "picasso1",
     						type: "categorical",
-    						colors: colors.picasso1
+    						colors: colors.picasso1,
+                show: function (layout) {
+                  return layout.qDef.usePalette === "categorical";
+                }
               }, {
+                icon: "",
+                label: "Picasso Div",
+                component: "color-scale",
+                reverse: function (d) {
+                  return d.qDef.reverse;
+                },
+                value: "picasso2",
+                type: "diverging",
+                colors: colors.picasso2,
+                show: function (layout) {
+                  return layout.qDef.usePalette === "diverging";
+                }
+              }, {
+                  icon: "",
+                  label: "Picasso Seq",
+                  component: "color-scale",
+                  reverse: function (d) {
+                    return d.qDef.reverse;
+                  },
+                  value: "picasso3",
+                  type: "gradient",
+                  colors: colors.picasso3,
+                  show: function (layout) {
+                    return layout.qDef.usePalette === "sequential";
+                  }
+                }, {
     						icon: "",
     						label: "Qlik Sense",
     						component: "color-scale",
@@ -311,6 +379,9 @@ define(["./colors"], function(colors) {
     						value: "qlik10",
     						type: "categorical",
     						colors: colors.qlik10,
+                show: function (layout) {
+                  return layout.qDef.usePalette === "categorical";
+                }
               }, {
   							icon: "",
   							label: "Qlik Sense 100",
@@ -319,8 +390,11 @@ define(["./colors"], function(colors) {
   								return d.qDef.reverse;
   							},
   							value: "qlik100",
-  							type: "sequential",
+  							type: "categorical",
   							colors: colors.qlik100,
+                show: function (layout) {
+                  return layout.qDef.usePalette === "categorical";
+                }
   						}, {
   							icon: "",
   							label: "d3 category 10",
@@ -329,8 +403,11 @@ define(["./colors"], function(colors) {
   								return d.qDef.reverse;
   							},
   							value: "category10",
-  							type: "sequential",
+  							type: "categorical",
   							colors: colors.category10,
+                show: function (layout) {
+                  return layout.qDef.usePalette === "categorical";
+                }
   						}, {
   							icon: "",
   							label: "d3 category 20",
@@ -339,8 +416,11 @@ define(["./colors"], function(colors) {
   								return d.qDef.reverse;
   							},
   							value: "category20",
-  							type: "sequential",
+  							type: "categorical",
   							colors: colors.category20,
+                show: function (layout) {
+                  return layout.qDef.usePalette === "categorical";
+                }
   						}
             ],
             show: function (layout) {

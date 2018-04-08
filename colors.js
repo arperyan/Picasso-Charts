@@ -5,18 +5,7 @@ define([], function() {
 		category10: ['#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#1f77b4', '#7f7f7f', '#bcbd22', '#17becf'],
 		category20: ['#1f77b4', '#aec7e8', '#ff7f0e', '#ffbb78', '#2ca02c', '#98df8a', '#d62728', '#ff9896', '#9467bd', '#c5b0d5', '#8c564b', '#c49c94', '#e377c2', '#f7b6d2', '#7f7f7f', '#c7c7c7', '#bcbd22', '#dbdb8d', '#17becf', '#9edae5'],
 		picasso1:	['#a54343', '#d76c6c', '#ec983d', '#ecc43d', '#f9ec86', '#cbe989', '#70ba6e', '#578b60', '#79d69f', '#26a0a7', '#138185', '#65d3da'],
+		picasso2: ['#3d52a1', '#3a89c9', '#77b7e5', '#b4ddf7', '#e6f5fe', '#ffe3aa', '#f9bd7e', '#ed875e', '#d24d3e', '#ae1c3e'],
+		picasso3: ['rgb(180,221,212)', 'rgb(34, 83, 90)']
 	};
 })
-
-//----Picasso Colors
-// var palettes = [{
-//   key: 'categorical',
-//   colors: [['#a54343', '#d76c6c', '#ec983d', '#ecc43d', '#f9ec86', '#cbe989', '#70ba6e', '#578b60', '#79d69f', '#26a0a7', '#138185', '#65d3da'] // breeze colors
-//   ]
-// }, {
-//   key: 'diverging',
-//   colors: [['#3d52a1', '#3a89c9', '#77b7e5', '#b4ddf7', '#e6f5fe', '#ffe3aa', '#f9bd7e', '#ed875e', '#d24d3e', '#ae1c3e']]
-// }, {
-//   key: 'sequential',
-//   colors: [['rgb(180,221,212)', 'rgb(34, 83, 90)']]
-// }];

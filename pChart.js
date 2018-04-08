@@ -26,7 +26,12 @@ define([
                 }
             },
             settings: {
-                major: { scale: 'dimension' },
+                major: {
+                  scale: 'dimension',
+                  // fn: function(d) {
+                  //   return d.scale(d.datum.value) + 0.3 * d.scale.bandwidth() + 'qMeasureInfo/0' * d.scale.bandwidth() * 0.4;
+                  // }
+                },
                 minor: { scale: 'measure' },
                 orientation: opts.orientation,
                 box: {
@@ -86,7 +91,7 @@ define([
                   opacity: opts.opacity
                 },
                 area: {
-                  fill: '#ccc', // Optional
+                  fill: opts.afill, // Optional
                   opacity: opts.areaOpacity, // Optional
                   show: opts.show, // Optional
                 }
@@ -547,6 +552,7 @@ define([
                             id: 'x-header',
                             text: measureLabels.join(', ')
                           }),
+
                           box({ id: 'bars',
                             start: 0,
                             end: { field: 'qMeasureInfo/0' },
@@ -559,11 +565,13 @@ define([
                           }),
                           line({ id: 'lines',
                             line: { field: 'qMeasureInfo/1' },
-                            //stroke: measureProp1.lineColor.color,
+                            stroke: measureProp1.lineColor.color,
+                            afill: measureProp1.areaColor.color,
                             strokeWidth: measureProp1.lineWidth,
                             curve: measureProp1.lineType,
                             show: measureProp1.showArea,
                             areaOpacity: measureProp1.areaOpacity
+
                           }),
                           point({ id: 'p',
                             dot: { field: 'qMeasureInfo/1' },
