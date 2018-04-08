@@ -619,7 +619,7 @@ define([
                             stroke: measureProp1.pstrokeColor.color,
                             fill: measureProp1.bubbleColor.color,
                             show: function() {
-                              if(measureProp1.showPoint === true) {
+                              if(measureProp1.showPoint === true && measureProp1.chartStyle === 'line') {
                                 return true;
                               } else {
                                 return false;

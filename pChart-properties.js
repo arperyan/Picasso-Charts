@@ -247,7 +247,7 @@ define(["./colors"], function(colors) {
                ref: "qDef.pstrokeColor",
                dualOutput: true,
                component: "color-picker",
-               defaultValue: defaultValue: {color: "#ffffff"},
+               defaultValue: {color: "#ffffff"},
                show: function (layout) {
                  return layout.qDef.chartStyle === "line" && layout.qDef.showPoint === true;
                }
