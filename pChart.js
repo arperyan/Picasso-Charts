@@ -28,9 +28,7 @@ define([
             settings: {
                 major: {
                   scale: 'dimension',
-                  fn: function(d) {
-                     return d.scale(d.datum.value) + 0.01 * d.scale.bandwidth() + opts.id * d.scale.bandwidth() * 1.2;
-                  } //----- Works
+                  fn: opts.fn
                 },
                 minor: { scale: 'measure' },
                 orientation: opts.orientation,
@@ -461,12 +459,18 @@ define([
                         		        return d.qFallbackTitle;
                                 }),
                 dimLabel = layout.qHyperCube.qDimensionInfo[0].qFallbackTitle,
-                colorSchema = typeof measureProp0.colorSchema !== 'undefined' ?  measureProp0.colorSchema : 'picasso1';
+                colorSchema = typeof measureProp0.colorSchema !== 'undefined' ?  measureProp0.colorSchema : 'picasso1'
+                ctrl = layout.qHyperCube.qMeasureInfo[0].chartStyle;
 
-                //console.log(measureProp1.pointColor);
+                function showPoint () {
+                  if(measureProp1.showPoints === true && measureProp1.chartStyle === 'line') {
+                    return true;
+                  } else {
+                    return false;
+                  }
+                };
 
-                console.log(measureProp1.showPoints);
-                console.log(measureProp1.chartStyle);
+                console.log(ctrl);
                 // var qMeaColorUser = layout.qHyperCube.qMeasureInfo.map(function(d){
       					//        //var m = typeof d.colorSchema !== "undefined" ? d.colorSchema : {};
       					//        return {
@@ -557,15 +561,6 @@ define([
                             dock: 'right',
                           }),
                           grid({id: 'gridline'}),
-                          yheader({
-                            id: 'y-header',
-                            text: dimLabel
-                          }),
-                          xheader({
-                            id: 'x-header',
-                            text: measureLabels.join(', ')
-                          }),
-
                           box({ id: '0',
                             start: 0,
                             end: {field: 'qMeasureInfo/0'},
@@ -574,7 +569,20 @@ define([
                             stroke: measureProp0.barColor.color,
                             opacity: measureProp0.barOpacity,
                             strokeWidth: measureProp0.barsWidth,
-                            orientation: measureProp0.barDirect
+                            orientation: measureProp0.barDirect,
+                            fn: function(d) {
+                                  //if(measureProp0.chartStyle === 'bar' && measureProp1.chartStyle ==='bar') {
+                                    return d.scale(d.datum.value) + 0.01 * d.scale.bandwidth() + 0 * d.scale.bandwidth() * 1.2;
+                                } //----- Works
+                            //}
+                          }),
+                          yheader({
+                            id: 'y-header',
+                            text: dimLabel
+                          }),
+                          xheader({
+                            id: 'x-header',
+                            text: measureLabels.join(', ')
                           }),
                           box({ id: '1',
                             start: 0,
@@ -590,7 +598,22 @@ define([
                             stroke: measureProp1.barColor.color,
                             opacity: measureProp1.barOpacity,
                             strokeWidth: measureProp1.barsWidth,
-                            orientation: measureProp1.barDirect
+                            orientation: measureProp1.barDirect,
+                            fn: function(d) {
+                                  //if(measureProp0.chartStyle === 'bar' && measureProp1.chartStyle ==='bar') {
+                                    return d.scale(d.datum.value) + 0.01 * d.scale.bandwidth() + 1 * d.scale.bandwidth() * 1.2;
+                                } //----- Works
+                            //}
+                          }),
+                          point({ id: 'p',
+                            dot: { field: 'qMeasureInfo/1' },
+                            pshow: showPoint(),
+                            //pshow: true,
+                            stroke: measureProp1.pstrokeColor.color,
+                            fill: measureProp1.bubbleColor.color,
+                            size: measureProp1.pointSize,
+                            opacity: measureProp1.pointOpacity,
+                            pstrokeWidth: measureProp1.pointStroke,
                           }),
                           line({ id: 'lines',
                             line: { field: 'qMeasureInfo/1' },
@@ -615,23 +638,7 @@ define([
                             areaOpacity: measureProp1.areaOpacity
 
                           }),
-                          point({ id: 'p',
-                            dot: { field: 'qMeasureInfo/1' },
-                            pshow: function() {
-                              if(measureProp1.showPoints === true && measureProp1.chartStyle === 'line') {
-                                return true;
-                              } else {
-                                return false;
-                              }
-                            },
-                            stroke: measureProp1.pstrokeColor.color,
-                            fill: measureProp1.bubbleColor.color,
-                            //show: false,
-                            size: measureProp1.pointSize,
-                            opacity: measureProp1.pointOpacity,
-                            pstrokeWidth: measureProp1.pointStroke,
-                            //pshow: false
-                          }),
+
 
 
                         //     This is for Sequential legend
