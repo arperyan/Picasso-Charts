@@ -460,7 +460,9 @@ define([
                                 }),
                 dimLabel = layout.qHyperCube.qDimensionInfo[0].qFallbackTitle,
                 colorSchema = typeof measureProp0.colorSchema !== 'undefined' ?  measureProp0.colorSchema : 'picasso1'
-                ctrl = layout.qHyperCube.qMeasureInfo[0].chartStyle;
+                ctrl = layout.qHyperCube.qMeasureInfo[0].chartStyle,
+                measLab0 = measureLabels[10],
+                measLab1 = measureLabels[1];
 
                 function showPoint () {
                   if(measureProp1.showPoints === true && measureProp1.chartStyle === 'line') {
@@ -470,7 +472,7 @@ define([
                   }
                 };
 
-                console.log(ctrl);
+                console.log(measureLabels[0]);
                 // var qMeaColorUser = layout.qHyperCube.qMeasureInfo.map(function(d){
       					//        //var m = typeof d.colorSchema !== "undefined" ? d.colorSchema : {};
       					//        return {
@@ -557,7 +559,11 @@ define([
                           range({id: 'brushrange'}),
                           legend({
                             type: 'legend-cat',
-                            scale: 'color',
+                            scale: {
+                              type: 'color',
+                              data: ['measLab0','measLab1'],
+                              range: [colors[colorSchema].measLab0, colors[colorSchema].measLab1]
+                            },
                             dock: 'right',
                           }),
                           grid({id: 'gridline'}),
@@ -571,10 +577,12 @@ define([
                             strokeWidth: measureProp0.barsWidth,
                             orientation: measureProp0.barDirect,
                             fn: function(d) {
-                                  //if(measureProp0.chartStyle === 'bar' && measureProp1.chartStyle ==='bar') {
+                                  if(measureProp1.chartStyle ==='bar') {
                                     return d.scale(d.datum.value) + 0.01 * d.scale.bandwidth() + 0 * d.scale.bandwidth() * 1.2;
-                                } //----- Works
-                            //}
+                                } else {
+                                  return d.scale(d.datum.value) + 0.5 * d.scale.bandwidth() + 0 * d.scale.bandwidth() * 1;
+                                }
+                              }
                           }),
                           yheader({
                             id: 'y-header',
@@ -600,10 +608,10 @@ define([
                             strokeWidth: measureProp1.barsWidth,
                             orientation: measureProp1.barDirect,
                             fn: function(d) {
-                                  //if(measureProp0.chartStyle === 'bar' && measureProp1.chartStyle ==='bar') {
+                                  if(measureProp1.chartStyle === 'bar') {
                                     return d.scale(d.datum.value) + 0.01 * d.scale.bandwidth() + 1 * d.scale.bandwidth() * 1.2;
                                 } //----- Works
-                            //}
+                             }
                           }),
                           point({ id: 'p',
                             dot: { field: 'qMeasureInfo/1' },
