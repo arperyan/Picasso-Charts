@@ -459,10 +459,16 @@ define([
                         		        return d.qFallbackTitle;
                                 }),
                 dimLabel = layout.qHyperCube.qDimensionInfo[0].qFallbackTitle,
-                colorSchema = typeof measureProp0.colorSchema !== 'undefined' ?  measureProp0.colorSchema : 'picasso1'
+                colorSchema = typeof measureProp0.colorSchema !== 'undefined' ?  measureProp0.colorSchema : 'picasso1',
+                colorsArray = colors[colorSchema].slice(0), // clone array
+                reverseColor = typeof measureProp0.reverse !== 'undefined' ? measureProp0.reverse : false;
                 ctrl = layout.qHyperCube.qMeasureInfo[0].chartStyle,
                 measLab0 = measureLabels[10],
                 measLab1 = measureLabels[1];
+
+                if (reverseColor) {
+                  colorsArray.reverse();
+                }
 
                 function showPoint () {
                   if(measureProp1.showPoints === true && measureProp1.chartStyle === 'line') {
@@ -515,7 +521,7 @@ define([
                             color: {
                               data: { fields: ['qMeasureInfo/0','qMeasureInfo/1']},
                               type: 'color',
-                              range: colors[colorSchema],
+                              range: colorsArray,
                               nice: true,
                               //type: 'threshold-color'
 
