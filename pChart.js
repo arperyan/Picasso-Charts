@@ -459,8 +459,23 @@ define([
                         		        return d.qFallbackTitle;
                                 }),
                 dimLabel = layout.qHyperCube.qDimensionInfo[0].qFallbackTitle,
-                colorSchema = typeof measureProp0.colorSchema !== 'undefined' ?  measureProp0.colorSchema : 'picasso1'
-                ctrl = layout.qHyperCube.qMeasureInfo[0].chartStyle;
+                colorSchema0 = typeof measureProp0.colorSchema !== 'undefined' ?  measureProp0.colorSchema : 'picasso1',
+                colorSchema1 = typeof measureProp1.colorSchema !== 'undefined' ?  measureProp1.colorSchema : 'picasso1'
+                colorsArray0 = colors[colorSchema0].slice(0), // clone array
+                colorsArray1 = colors[colorSchema1].slice(0),
+                reverseColor0 = typeof measureProp0.reverse !== 'undefined' ? measureProp0.reverse : false,
+                reverseColor1 = typeof measureProp1.reverse !== 'undefined' ? measureProp1.reverse : false,
+                ctrl = layout.qHyperCube.qMeasureInfo[0].chartStyle,
+                measLab0 = measureLabels[0],
+                measLab1 = measureLabels[1];
+
+                if (reverseColor0) {
+                  colorsArray0.reverse();
+                }
+
+                if (reverseColor1) {
+                  colorsArray1.reverse();
+                }
 
                 function showPoint () {
                   if(measureProp1.showPoints === true && measureProp1.chartStyle === 'line') {
@@ -470,7 +485,11 @@ define([
                   }
                 };
 
-                console.log(ctrl);
+                const colorst = {
+                  Sales: '#060',
+                  Margin: '#6c0'
+                };
+                console.log(measureLabels[0]);
                 // var qMeaColorUser = layout.qHyperCube.qMeasureInfo.map(function(d){
       					//        //var m = typeof d.colorSchema !== "undefined" ? d.colorSchema : {};
       					//        return {
@@ -510,10 +529,21 @@ define([
                                 min: 0,
                                 include: [0]
                             },
-                            color: {
-                              data: { fields: ['qMeasureInfo/0','qMeasureInfo/1']},
+                            color0: {
+                              data: { field: 'qMeasureInfo/0'},
                               type: 'color',
-                              range: colors[colorSchema],
+                              range: colorsArray0,
+                              nice: true,
+                              //type: 'threshold-color'
+
+                                // data:  { fields: ['qMeasureInfo/0','qMeasureInfo/1']},
+                                // type: 'categorical-color',
+                                // range: ['red', 'blue'],//measureProp0.colorPalette//'color'
+                            },
+                            color1: {
+                              data: { field: 'qMeasureInfo/1'},
+                              type: 'color',
+                              range: colorsArray1,
                               nice: true,
                               //type: 'threshold-color'
 
@@ -556,25 +586,34 @@ define([
                           }),
                           range({id: 'brushrange'}),
                           legend({
+                            // type: 'legend-cat',
+                            // scale: {
+                            //   type: 'color',
+                            //   data: ['Sales','SalesYTD'],
+                            //   range: [colorst.Sales, colorst.Margin]
+                            // },
+                            // dock: 'top',
                             type: 'legend-cat',
-                            scale: 'color',
-                            dock: 'right',
+                            scale: 'color0',
+                            dock: 'top'
                           }),
                           grid({id: 'gridline'}),
                           box({ id: '0',
                             start: 0,
                             end: {field: 'qMeasureInfo/0'},
                             show: true,
-                            fill: { scale: 'color', ref: 'end'},//{ scale: 'color'},
+                            fill: { scale: 'color0', ref: 'end'},//{ scale: 'color'},
                             stroke: measureProp0.barColor.color,
                             opacity: measureProp0.barOpacity,
                             strokeWidth: measureProp0.barsWidth,
                             orientation: measureProp0.barDirect,
                             fn: function(d) {
-                                  //if(measureProp0.chartStyle === 'bar' && measureProp1.chartStyle ==='bar') {
+                                  if(measureProp1.chartStyle ==='bar') {
                                     return d.scale(d.datum.value) + 0.01 * d.scale.bandwidth() + 0 * d.scale.bandwidth() * 1.2;
-                                } //----- Works
-                            //}
+                                } else {
+                                  return d.scale(d.datum.value) + 0.5 * d.scale.bandwidth() + 0 * d.scale.bandwidth() * 1;
+                                }
+                              }
                           }),
                           yheader({
                             id: 'y-header',
@@ -594,16 +633,16 @@ define([
                                 return false;
                               }
                             },
-                            fill: { scale: 'color', ref: 'end'},//{ scale: 'color'},
+                            fill: { scale: 'color1', ref: 'end'},//{ scale: 'color'},
                             stroke: measureProp1.barColor.color,
                             opacity: measureProp1.barOpacity,
                             strokeWidth: measureProp1.barsWidth,
                             orientation: measureProp1.barDirect,
                             fn: function(d) {
-                                  //if(measureProp0.chartStyle === 'bar' && measureProp1.chartStyle ==='bar') {
+                                  if(measureProp1.chartStyle === 'bar') {
                                     return d.scale(d.datum.value) + 0.01 * d.scale.bandwidth() + 1 * d.scale.bandwidth() * 1.2;
                                 } //----- Works
-                            //}
+                             }
                           }),
                           point({ id: 'p',
                             dot: { field: 'qMeasureInfo/1' },
