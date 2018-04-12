@@ -213,10 +213,11 @@ define([
             scale: opts.scale,
             dock: opts.dock,
             displayOrder: 1,
+            show: true,
             settings: {
               layout: {  // Optional
                 size: 1, // Maximum number of columns (vertical) or rows (horizontal) // Optional
-                direction: 'rtl', // Layout direction. Either `'ltr'` or `'rtl'` // Optional
+                direction: 'ltr', // Layout direction. Either `'ltr'` or `'rtl'` // Optional
               },
               item: {  // Optional
                 // Settings applied per item
@@ -234,7 +235,8 @@ define([
               title: {
                 show: true,
                 anchor: 'start',
-                //fill: 'red',
+                fill: 'red',
+                text: 'Measure',
                 wordBreak: 'break-word'
               },
               navigation: {
@@ -250,20 +252,20 @@ define([
                 }
               }
             },
-            brush: {
-                trigger: [{
-                  on: 'tap',
-                  contexts: ['highlight'],
-                }],
-                consume: [{
-                  context: 'highlight',
-                  style: {
-                    inactive: {
-                      opacity: 0.3
-                    }
-                  }
-                }]
-            }
+            // brush: {
+            //     trigger: [{
+            //       on: 'tap',
+            //       contexts: ['highlight'],
+            //     }],
+            //     consume: [{
+            //       context: 'highlight',
+            //       style: {
+            //         inactive: {
+            //           opacity: 0.3
+            //         }
+            //       }
+            //     }]
+            // }
           };
         }
 
@@ -485,11 +487,25 @@ define([
                   }
                 };
 
-                const colorst = {
-                  Sales: '#060',
-                  Margin: '#6c0'
+                function barColor0() {
+                      if(measureProp0.usePalette === 'single') {
+                        return measureProp0.singleColor.color;
+                      } else {
+                         return {'scale': 'color0', 'ref': 'end'};
+                      }
+
                 };
-                console.log(measureLabels[0]);
+
+                function barColor1() {
+                      if(measureProp1.usePalette === 'single') {
+                        return typeof measureProp1.singleColor.color !== 'undefined' ?  measureProp1.singleColor.color : rgb(34, 83, 90) ;
+                      } else {
+                         return {'scale': 'color1', 'ref': 'end'};
+                      }
+
+                };
+
+                //console.log(colorsArray0[0]);
                 // var qMeaColorUser = layout.qHyperCube.qMeasureInfo.map(function(d){
       					//        //var m = typeof d.colorSchema !== "undefined" ? d.colorSchema : {};
       					//        return {
@@ -586,29 +602,29 @@ define([
                           }),
                           range({id: 'brushrange'}),
                           legend({
-                            // type: 'legend-cat',
-                            // scale: {
-                            //   type: 'color',
-                            //   data: ['Sales','SalesYTD'],
-                            //   range: [colorst.Sales, colorst.Margin]
-                            // },
-                            // dock: 'top',
                             type: 'legend-cat',
-                            scale: 'color0',
-                            dock: 'top'
+                            scale: {
+                              type: 'categorical-color',
+                              data: [measLab0,measLab1],
+                              range: [colorsArray0[0], colorsArray1[colorsArray1.length-1]]
+                            },
+                            dock: 'right',
+                            // type: 'legend-cat',
+                            // scale: 'color0',
+                            // dock: 'top'
                           }),
                           grid({id: 'gridline'}),
                           box({ id: '0',
                             start: 0,
                             end: {field: 'qMeasureInfo/0'},
                             show: true,
-                            fill: { scale: 'color0', ref: 'end'},//{ scale: 'color'},
+                            fill: barColor0(),
                             stroke: measureProp0.barColor.color,
                             opacity: measureProp0.barOpacity,
                             strokeWidth: measureProp0.barsWidth,
                             orientation: measureProp0.barDirect,
                             fn: function(d) {
-                                  if(measureProp1.chartStyle ==='bar') {
+                                  if(measureProp0.chartStyle ==='bar') {
                                     return d.scale(d.datum.value) + 0.01 * d.scale.bandwidth() + 0 * d.scale.bandwidth() * 1.2;
                                 } else {
                                   return d.scale(d.datum.value) + 0.5 * d.scale.bandwidth() + 0 * d.scale.bandwidth() * 1;
@@ -633,7 +649,7 @@ define([
                                 return false;
                               }
                             },
-                            fill: { scale: 'color1', ref: 'end'},//{ scale: 'color'},
+                            fill: barColor1(),
                             stroke: measureProp1.barColor.color,
                             opacity: measureProp1.barOpacity,
                             strokeWidth: measureProp1.barsWidth,
