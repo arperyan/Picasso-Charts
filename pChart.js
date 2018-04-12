@@ -487,6 +487,25 @@ define([
                   }
                 };
 
+                function legColor0() {
+                      if(measureProp0.usePalette === 'single') {
+                        return measureProp0.singleColor.color;
+                      } else {
+                         return colorsArray0[0];
+                      }
+
+                };
+
+                function legColor1() {
+                      if(measureProp1.usePalette === 'single') {
+                        return typeof measureProp1.singleColor.color !== 'undefined' ?  measureProp1.singleColor.color : rgb(34, 83, 90) ;
+                      } else {
+                         return colorsArray1[colorsArray1.length-1];
+                      }
+
+                };
+
+
                 function barColor0() {
                       if(measureProp0.usePalette === 'single') {
                         return measureProp0.singleColor.color;
@@ -606,7 +625,7 @@ define([
                             scale: {
                               type: 'categorical-color',
                               data: [measLab0,measLab1],
-                              range: [colorsArray0[0], colorsArray1[colorsArray1.length-1]]
+                              range:  [legColor0(), legColor1()]
                             },
                             dock: 'right',
                             // type: 'legend-cat',
