@@ -479,7 +479,7 @@ define([
                   colorsArray1.reverse();
                 }
 
-                function showPoint () {
+                function showPoint1 () {
                   if(measureProp1.showPoints === true && measureProp1.chartStyle === 'line') {
                     return true;
                   } else {
@@ -487,11 +487,22 @@ define([
                   }
                 };
 
+
+                function showPoint0 () {
+                  if(measureProp0.showPoints === true && measureProp0.chartStyle === 'line') {
+                    return true;
+                  } else {
+                    return false;
+                  }
+                };
+
                 function legColor0() {
-                      if(measureProp0.usePalette === 'single') {
+                      if(measureProp0.usePalette === 'single' && measureProp0.chartStyle === 'bar') {
                         return measureProp0.singleColor.color;
-                      } else {
+                      } else if(measureProp0.chartStyle === 'bar'){
                          return colorsArray0[0];
+                      } else {
+                        return measureProp0.lineColor.color
                       }
 
                 };
@@ -687,9 +698,19 @@ define([
                                 } //----- Works
                              }
                           }),
-                          point({ id: 'p',
+                          point({ id: 'p0',
+                            dot: { field: 'qMeasureInfo/0' },
+                            pshow: showPoint0(),
+                            //pshow: true,
+                            stroke: measureProp0.pstrokeColor.color,
+                            fill: measureProp0.bubbleColor.color,
+                            size: measureProp0.pointSize,
+                            opacity: measureProp0.pointOpacity,
+                            pstrokeWidth: measureProp0.pointStroke,
+                          }),
+                          point({ id: 'p1',
                             dot: { field: 'qMeasureInfo/1' },
-                            pshow: showPoint(),
+                            pshow: showPoint1(),
                             //pshow: true,
                             stroke: measureProp1.pstrokeColor.color,
                             fill: measureProp1.bubbleColor.color,
@@ -697,7 +718,7 @@ define([
                             opacity: measureProp1.pointOpacity,
                             pstrokeWidth: measureProp1.pointStroke,
                           }),
-                          line({ id: 'lines',
+                          line({ id: 'line1',
                             line: { field: 'qMeasureInfo/1' },
                             stroke: measureProp1.lineColor.color,
                             afill: measureProp1.areaColor.color,
@@ -720,7 +741,7 @@ define([
                             areaOpacity: measureProp1.areaOpacity
 
                           }),
-                          line({ id: 'line',
+                          line({ id: 'line0',
                             line: { field: 'qMeasureInfo/0' },
                             stroke: measureProp0.lineColor.color,
                             afill: measureProp0.areaColor.color,

@@ -456,6 +456,155 @@ define(["./colors"], function(colors) {
   var settings = {
     uses: "settings",
     items: {
+      presentation : {
+        label: "Presentation",
+        type: "items",
+        items: {
+          chartStyle: {
+            type: "string",
+            component: "item-selection-list",
+            icon: "true",
+            horizontal: "true",
+            label: "",
+            ref: "orient",
+            defaultValue: "vertical",
+            items: [
+              {
+              value:"vertical",
+              component:"icon-item",
+              labelPlacement: "bottom",
+              icon: "º",
+              label: "Vertical"
+              },
+              {
+              value:"horizontal",
+              component:"icon-item",
+              icon: "Ω",
+              labelPlacement: "bottom",
+              label: "Horizontal"
+              }
+            ]
+          },
+          maGrid: {
+             type: "items",
+             items: {
+               majorGrid: {
+                 type: "boolean",
+                 component: "switch",
+                 label: "Grid Lines",
+                 ref: "major",
+                 options: [{
+                   value: true,
+                   label: "On"
+                 }, {
+                   value: false,
+                   label: "Off"
+                 }],
+                 defaultValue: false
+               },
+               magridStroke: {
+                 type: "number",
+                 component: "slider",
+                 label: function(d) {
+                   return "Major Grid Width (" + d.majGridStroke +"px)";
+                 },
+                 ref: "majGridStroke",
+                 min: 1,
+                 max: 5,
+                 step: 1,
+                 defaultValue: 2,
+                 show: function (layout) {
+                   return layout.major === true;
+                 }
+               },
+               maGridColors: {
+                 type: "object",
+                 label: "Stroke Color",
+                 ref: "maGridColor",
+                 dualOutput: true,
+                 component: "color-picker",
+                 defaultValue: {color: "#ccc"},
+                 show: function (layout) {
+                   return layout.major === true;
+                 }
+               }
+             }
+           },
+           miGrid: {
+              type: "items",
+              items: {
+                minorGrid: {
+                  type: "boolean",
+                  component: "switch",
+                  label: "Grid Lines",
+                  ref: "minor",
+                  options: [{
+                    value: true,
+                    label: "On"
+                  }, {
+                    value: false,
+                    label: "Off"
+                  }],
+                  defaultValue: false
+                },
+                migridStroke: {
+                  type: "number",
+                  component: "slider",
+                  label: function(d) {
+                    return "Minor Grid Width (" + d.minGridStroke +"px)";
+                  },
+                  ref: "minGridStroke",
+                  min: 1,
+                  max: 5,
+                  step: 1,
+                  defaultValue: 1,
+                  show: function (layout) {
+                    return layout.minor === true;
+                  }
+                },
+                maGridColors: {
+                  type: "object",
+                  label: "Stroke Color",
+                  ref: "minGridColor",
+                  dualOutput: true,
+                  component: "color-picker",
+                  defaultValue: {color: "#ccc"},
+                  show: function (layout) {
+                    return layout.minor === true;
+                  }
+                }
+              }
+            },
+            valLabels: {
+              type: "items",
+              items: {
+                labels: {
+                  type: "boolean",
+                  component: "switch",
+                  label: "Value Labels",
+                  ref: "labels",
+                  options: [{
+                    value: true,
+                    label: "On"
+                  }, {
+                    value: false,
+                    label: "Off"
+                  }],
+                  defaultValue: true
+                },
+                font: {
+                  ref: "labelTitle",
+      						label: "Label size",
+      						type: "string",
+      						defaultValue: "12px",
+                  max: "20px"
+      					}
+
+
+              }
+            }
+          }
+      },
       legend: {
         label: "Legend",
         type: "items",
@@ -476,89 +625,118 @@ define(["./colors"], function(colors) {
           }
         }
       },
-      axis: {
-        label: "Axis",
+      xAxis : {
+        label: "X-axis",
         type: "items",
         items: {
-          orientation: {
-            type: "string",
-            component: "dropdown",
-            label: "Axis Orientation",
-            ref: "orientation",
-            options: [{
-              value: "left",
-              label: "Primary Axis"
-            }, {
-              value: "right",
-              label: "Secondary Axis"
-            }]
+          axis: {
+            label: "Axis",
+            type: "items",
+            items: {
+              orientation: {
+                type: "string",
+                component: "dropdown",
+                label: "Axis Orientation",
+                ref: "orientation",
+                options: [{
+                  value: "left",
+                  label: "Primary Axis"
+                }, {
+                  value: "right",
+                  label: "Secondary Axis"
+                }]
+              }
+            }
           }
         }
       },
-      orient: {
+      yAxis : {
+        label: "Y-axis",
         type: "items",
         items: {
-          vertHori: {
-            type: "string",
-						component: "buttongroup",
-						label: "Bar Orientation",
-						ref: "barDirect",
-						options: [{
-							value: "vertical",
-							label: "Vertical",
-							tooltip: "Select for vertical"
-						}, {
-							value: "horizontal",
-							label: "Horizontal",
-							tooltip: "Select for horizontal"
-						}],
-						defaultValue: "vertical",
-
-					}
-        }
-      },
-      Layout: {
-        label: "Layout",
-        type: "items",
-        items: {
-          showInnerOuterWidth: {
-            type: "boolean",
-            ref: "showInnerOuterWidth",
-            defaultValue: false,
-            show: false
-          },
-          innerWidth: {
-            type: "number",
-            component: "slider",
-            label: function (d) {
-              return "Inner Distance (" + d.innerWidth + "px)";
-            },
-            ref: "innerWidth",
-            min: 0,
-            max: 0.8,
-            step: 0.1,
-            defaultValue: 0.2,
-            show: function (layout) {
-              return layout.showInnerOuterWidth;//layout.qDef.chartStyle === "line";
+          axis: {
+            label: "Axis Orientation",
+            type: "items",
+            items: {
+              orientation: {
+                type: "string",
+                component: "dropdown",
+                label: "Axis Orientation",
+                ref: "orientation",
+                options: [{
+                  value: "left",
+                  label: "Primary Axis"
+                }, {
+                  value: "right",
+                  label: "Secondary Axis"
+                }]
+              }
             }
           },
-          outerWidth: {
-            type: "number",
-            component: "slider",
-            label: function (d) {
-              return "Outer Distance (" + d.outerWidth + "px)";
-            },
-            ref: "outerWidth",
-            min: 0,
-            max: 1,
-            step: 0.2,
-            defaultValue: 0.2,
-            show: function (layout) {
-              return layout.showInnerOuterWidth;//layout.qDef.chartStyle === "line";
+          axisOrien: {
+            label: "Axis Orientation",
+            type: "items",
+            items: {
+              orientation: {
+                type: "string",
+                component: "dropdown",
+                label: "Axis Orientation",
+                ref: "orientation",
+                options: [{
+                  value: "left",
+                  label: "Primary Axis"
+                }, {
+                  value: "right",
+                  label: "Secondary Axis"
+                }]
+              }
             }
           }
         }
       }
+
+        // Layout: {
+        //   label: "Layout",
+        //   type: "items",
+        //   items: {
+        //     showInnerOuterWidth: {
+        //       type: "boolean",
+        //       ref: "showInnerOuterWidth",
+        //       defaultValue: false,
+        //       show: false
+        //     },
+        //     innerWidth: {
+        //       type: "number",
+        //       component: "slider",
+        //       label: function (d) {
+        //         return "Inner Distance (" + d.innerWidth + "px)";
+        //       },
+        //       ref: "innerWidth",
+        //       min: 0,
+        //       max: 0.8,
+        //       step: 0.1,
+        //       defaultValue: 0.2,
+        //       show: function (layout) {
+        //         return layout.showInnerOuterWidth;//layout.qDef.chartStyle === "line";
+        //       }
+        //     },
+        //     outerWidth: {
+        //       type: "number",
+        //       component: "slider",
+        //       label: function (d) {
+        //         return "Outer Distance (" + d.outerWidth + "px)";
+        //       },
+        //       ref: "outerWidth",
+        //       min: 0,
+        //       max: 1,
+        //       step: 0.2,
+        //       defaultValue: 0.2,
+        //       show: function (layout) {
+        //         return layout.showInnerOuterWidth;//layout.qDef.chartStyle === "line";
+        //       }
+        //     }
+        //   }
+        // }
     }
   };
 
