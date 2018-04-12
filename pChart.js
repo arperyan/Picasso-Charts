@@ -497,10 +497,12 @@ define([
                 };
 
                 function legColor1() {
-                      if(measureProp1.usePalette === 'single') {
+                      if(measureProp1.usePalette === 'single' && measureProp1.chartStyle === 'bar') {
                         return typeof measureProp1.singleColor.color !== 'undefined' ?  measureProp1.singleColor.color : rgb(34, 83, 90) ;
-                      } else {
+                      } else if(measureProp1.chartStyle === 'bar'){
                          return colorsArray1[colorsArray1.length-1];
+                      } else {
+                        return measureProp1.lineColor.color
                       }
 
                 };
@@ -636,14 +638,20 @@ define([
                           box({ id: '0',
                             start: 0,
                             end: {field: 'qMeasureInfo/0'},
-                            show: true,
+                            show: function() {
+                              if(measureProp0.chartStyle === 'bar') {
+                                return true;
+                              } else {
+                                return false;
+                              }
+                            },
                             fill: barColor0(),
                             stroke: measureProp0.barColor.color,
                             opacity: measureProp0.barOpacity,
                             strokeWidth: measureProp0.barsWidth,
                             orientation: measureProp0.barDirect,
                             fn: function(d) {
-                                  if(measureProp0.chartStyle ==='bar') {
+                                  if(measureProp1.chartStyle ==='bar') {
                                     return d.scale(d.datum.value) + 0.01 * d.scale.bandwidth() + 0 * d.scale.bandwidth() * 1.2;
                                 } else {
                                   return d.scale(d.datum.value) + 0.5 * d.scale.bandwidth() + 0 * d.scale.bandwidth() * 1;
@@ -710,6 +718,29 @@ define([
                               }
                             },
                             areaOpacity: measureProp1.areaOpacity
+
+                          }),
+                          line({ id: 'line',
+                            line: { field: 'qMeasureInfo/0' },
+                            stroke: measureProp0.lineColor.color,
+                            afill: measureProp0.areaColor.color,
+                            strokeWidth: measureProp0.lineWidth,
+                            curve: measureProp0.lineType,
+                            ashow: function() {
+                              if(measureProp0.showArea === true && measureProp0.chartStyle === 'line') {
+                                return true;
+                              } else {
+                                return false;
+                              }
+                            },
+                            show: function() {
+                              if(measureProp0.chartStyle === 'line') {
+                                return true;
+                              } else {
+                                return false;
+                              }
+                            },
+                            areaOpacity: measureProp0.areaOpacity
 
                           }),
 

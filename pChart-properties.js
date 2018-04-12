@@ -42,30 +42,6 @@ define(["./colors"], function(colors) {
         //     layout.qDef.barWidth = 0;
         //}
       },
-      orient: {
-        type: "items",
-        items: {
-          vertHori: {
-            type: "string",
-						component: "buttongroup",
-						label: "Bar Orientation",
-						ref: "qDef.barDirect",
-						options: [{
-							value: "vertical",
-							label: "Vertical",
-							tooltip: "Select for vertical"
-						}, {
-							value: "horizontal",
-							label: "Horizontal",
-							tooltip: "Select for horizontal"
-						}],
-						defaultValue: "vertical",
-            show: function (layout) {
-              return layout.qDef.chartStyle === "bar";
-            }
-					}
-        }
-      },
       barBorder: {
         type: "items",
         items: {
@@ -517,6 +493,28 @@ define(["./colors"], function(colors) {
               label: "Secondary Axis"
             }]
           }
+        }
+      },
+      orient: {
+        type: "items",
+        items: {
+          vertHori: {
+            type: "string",
+						component: "buttongroup",
+						label: "Bar Orientation",
+						ref: "barDirect",
+						options: [{
+							value: "vertical",
+							label: "Vertical",
+							tooltip: "Select for vertical"
+						}, {
+							value: "horizontal",
+							label: "Horizontal",
+							tooltip: "Select for horizontal"
+						}],
+						defaultValue: "vertical",
+
+					}
         }
       },
       Layout: {
