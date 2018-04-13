@@ -411,7 +411,7 @@ define(["./colors"], function(colors) {
             ref: "qDef.singleColor",
             dualOutput: true,
             component: "color-picker",
-            defaultValue: {color: "rgb(180,221,212)"},
+            defaultValue: {color: "#7DB8DA"},
             show: function (layout) {
               return layout.qDef.usePalette === "single" && layout.qDef.chartStyle === "bar";
             }
@@ -491,7 +491,7 @@ define(["./colors"], function(colors) {
                majorGrid: {
                  type: "boolean",
                  component: "switch",
-                 label: "Grid Lines",
+                 label: "Major Grid Lines",
                  ref: "major",
                  options: [{
                    value: true,
@@ -536,7 +536,7 @@ define(["./colors"], function(colors) {
                 minorGrid: {
                   type: "boolean",
                   component: "switch",
-                  label: "Grid Lines",
+                  label: "Minor Grid Lines",
                   ref: "minor",
                   options: [{
                     value: true,
@@ -590,18 +590,42 @@ define(["./colors"], function(colors) {
                     value: false,
                     label: "Off"
                   }],
-                  defaultValue: true
+                  defaultValue: false
+                },
+                fontType: {
+                  type: "string",
+                  component: "dropdown",
+                  label: "Font Type",
+                  ref: "fontType",
+                  options: [{
+                    value: "Arial",
+                    label: "Arial",
+                  }, {
+                    value: "Helvetica",
+                    label: "Helvetica",
+                  },{
+                    value: "sans-serif",
+                    label: "Sans-Serif",
+                  }
+                ],
+                  defaultValue: "Arial"
                 },
                 font: {
-                  ref: "labelTitle",
-      						label: "Label size",
-      						type: "string",
-      						defaultValue: "12px",
-                  max: "20px"
-      					}
-
-
-              }
+                  type: "number",
+                  component: "slider",
+                  label: function(d) {
+                    return "Font Size (" + d.lableFontSize +"px)";
+                  },
+                  ref: "lableFontSize",
+                  min: 8,
+                  max: 20,
+                  step: 1,
+                  defaultValue: 12,
+                  show: function (layout) {
+                    return layout.labels === true;
+                  }
+                },
+      				}
             }
           }
       },
@@ -693,50 +717,50 @@ define(["./colors"], function(colors) {
             }
           }
         }
-      }
+      },
 
-        // Layout: {
-        //   label: "Layout",
-        //   type: "items",
-        //   items: {
-        //     showInnerOuterWidth: {
-        //       type: "boolean",
-        //       ref: "showInnerOuterWidth",
-        //       defaultValue: false,
-        //       show: false
-        //     },
-        //     innerWidth: {
-        //       type: "number",
-        //       component: "slider",
-        //       label: function (d) {
-        //         return "Inner Distance (" + d.innerWidth + "px)";
-        //       },
-        //       ref: "innerWidth",
-        //       min: 0,
-        //       max: 0.8,
-        //       step: 0.1,
-        //       defaultValue: 0.2,
-        //       show: function (layout) {
-        //         return layout.showInnerOuterWidth;//layout.qDef.chartStyle === "line";
-        //       }
-        //     },
-        //     outerWidth: {
-        //       type: "number",
-        //       component: "slider",
-        //       label: function (d) {
-        //         return "Outer Distance (" + d.outerWidth + "px)";
-        //       },
-        //       ref: "outerWidth",
-        //       min: 0,
-        //       max: 1,
-        //       step: 0.2,
-        //       defaultValue: 0.2,
-        //       show: function (layout) {
-        //         return layout.showInnerOuterWidth;//layout.qDef.chartStyle === "line";
-        //       }
-        //     }
-        //   }
-        // }
+        Layout: {
+          label: "Layout",
+          type: "items",
+          items: {
+            showInnerOuterWidth: {
+              type: "boolean",
+              ref: "showInnerOuterWidth",
+              defaultValue: false,
+              show: false
+            },
+            innerWidth: {
+              type: "number",
+              component: "slider",
+              label: function (d) {
+                return "Inner Distance (" + d.innerWidth + "px)";
+              },
+              ref: "innerWidth",
+              min: 0,
+              max: 0.8,
+              step: 0.1,
+              defaultValue: 0.2,
+              show: function (layout) {
+                return layout.showInnerOuterWidth;//layout.qDef.chartStyle === "line";
+              }
+            },
+            outerWidth: {
+              type: "number",
+              component: "slider",
+              label: function (d) {
+                return "Outer Distance (" + d.outerWidth + "px)";
+              },
+              ref: "outerWidth",
+              min: 0,
+              max: 1,
+              step: 0.2,
+              defaultValue: 0.2,
+              show: function (layout) {
+                return layout.showInnerOuterWidth;//layout.qDef.chartStyle === "line";
+              }
+            }
+          }
+        }
     }
   };
 
