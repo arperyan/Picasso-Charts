@@ -14,7 +14,7 @@ define([
         var box = function (opts) {
           return  {
             type: 'box',
-            key: opts.id + 1,
+            key: opts.id,
             displayOrder: 1,
             data: {
                 extract: {
@@ -617,8 +617,8 @@ define([
                               }]
                         }],
                         components: [
-                          labels({ c: '0'}),
                           labels({ c: '1'}),
+                          labels({ id: '0'}),
                           yaxis({
                             id: 'y-axis',
                             dock: layout.orientation
@@ -687,8 +687,8 @@ define([
                             strokeWidth: measureProp1.barsWidth,
                             orientation: measureProp1.barDirect,
                             width: function(d) {
-                                  if(measureProp1.chartStyle === 'line' && measureProp0.chartStyle === 'bar') {
-                                    return 2.7;
+                                  if(measureProp0.chartStyle === 'line' && measureProp1.chartStyle === 'bar') {
+                                    return 2.65;
                                 } else {
                                    return 1;
                                 }//----- Works

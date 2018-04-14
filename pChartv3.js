@@ -26,13 +26,17 @@ define([
                 }
             },
             settings: {
-                major: { scale: 'dimension' },
+                major: {
+                  scale: 'dimension',
+                  fn: opts.fn
+                },
                 minor: { scale: 'measure' },
+                orientation: opts.orientation,
                 box: {
                     show: opts.show,
                     fill: opts.fill,
                     opacity: opts.opacity,
-                    width: 1,
+                    width: opts.width,
                     stroke: opts.stroke, // Optional
                     strokeWidth: opts.strokeWidth, // Optional
                 },
@@ -77,18 +81,17 @@ define([
                 minor: { scale: 'measure', ref: 'line' }
               },
               layers: {
-                curve: 'monotone', //// cardinal, linear
-                show: true,
+                curve: opts.curve, //// cardinal, linear
                 line: {
                   stroke: opts.stroke,
-                  show: true,
-                  strokeWidth: 4,
-                  opacity: 1
+                  show: opts.show,
+                  strokeWidth: opts.strokeWidth,
+                  opacity: opts.opacity
                 },
                 area: {
-                  fill: '#ccc', // Optional
-                  opacity: 0.8, // Optional
-                  show: false, // Optional
+                  fill: opts.afill, // Optional
+                  opacity: opts.areaOpacity, // Optional
+                  show: opts.ashow, // Optional
                 }
               }
             },
@@ -110,6 +113,7 @@ define([
             key: opts.id,
             type: 'point',
             displayOrder: 3,
+            show: opts.pshow,
             data: {
               extract: {
                 field: 'qDimensionInfo/0',
@@ -123,9 +127,9 @@ define([
               y: { scale: 'measure', ref: 'dot' },
               fill: opts.fill,
               size: opts.size,
-              opacity: 0.8,
-              strokeWidth: 2,
-              stroke: "#fff",
+              opacity: opts.opacity,
+              strokeWidth: opts.pstrokeWidth,
+              stroke: opts.stroke,
             },
             brush: {
               trigger: [{
@@ -151,14 +155,65 @@ define([
           };
         }
 
-        var labels = function (opts) {
+        var labels0 = function (opts) {
           return {
             type: 'labels',
-            key: 'labels',
+            key: 'labels0',
             displayOrder: 4,
             settings: {
               sources: [{
-                component: opts.c,
+                component: opts.id,
+                selector: 'rect',
+                strategy: {
+                  type: 'bar',
+                  settings: {
+                    direction: 'down',
+                    fontSize: opts.fontSize || 12,
+                    fontFamily: 'Arial',
+                    //align: 'align' in opts ? opts.align : 0.5,
+                    align: 0.5,
+                     labels: [{
+                      placements: [
+                        {
+                          position: 'opposite', // 'inside' | 'outside' | 'opposite'
+                          // justify: 0.2, // Placement of the label along the direction of the bar // Optional
+                          fill: '#333', // Color of the label // Optional
+                        },
+                        {
+                          position: 'inside',
+                          //justify: 0.2,
+                          fill: '#fff'
+                        }
+                      ],
+                      label({ data }) {
+                        return data ? data.end.label : '';
+                      }
+                    }]
+                  }
+                }
+              }]
+            },
+            brush: {
+              consume: [{
+                  context: 'highlight',
+                  style: {
+                    inactive: {
+                      opacity: 0.3
+                    }
+                  }
+                }]
+            }
+          };
+        }
+
+        var labels1 = function (opts) {
+          return {
+            type: 'labels',
+            key: 'labels1',
+            displayOrder: 4,
+            settings: {
+              sources: [{
+                component: opts.id,
                 selector: 'rect',
                 strategy: {
                   type: 'bar',
@@ -209,10 +264,11 @@ define([
             scale: opts.scale,
             dock: opts.dock,
             displayOrder: 1,
+            show: true,
             settings: {
               layout: {  // Optional
                 size: 1, // Maximum number of columns (vertical) or rows (horizontal) // Optional
-                direction: 'rtl', // Layout direction. Either `'ltr'` or `'rtl'` // Optional
+                direction: 'ltr', // Layout direction. Either `'ltr'` or `'rtl'` // Optional
               },
               item: {  // Optional
                 // Settings applied per item
@@ -230,7 +286,8 @@ define([
               title: {
                 show: true,
                 anchor: 'start',
-                //fill: 'red',
+                fill: 'red',
+                text: 'Measure',
                 wordBreak: 'break-word'
               },
               navigation: {
@@ -246,20 +303,20 @@ define([
                 }
               }
             },
-            brush: {
-                trigger: [{
-                  on: 'tap',
-                  contexts: ['highlight'],
-                }],
-                consume: [{
-                  context: 'highlight',
-                  style: {
-                    inactive: {
-                      opacity: 0.3
-                    }
-                  }
-                }]
-            }
+            // brush: {
+            //     trigger: [{
+            //       on: 'tap',
+            //       contexts: ['highlight'],
+            //     }],
+            //     consume: [{
+            //       context: 'highlight',
+            //       style: {
+            //         inactive: {
+            //           opacity: 0.3
+            //         }
+            //       }
+            //     }]
+            // }
           };
         }
 
@@ -434,6 +491,8 @@ define([
           };
         }
 
+
+
         return {
             definition: properties,
             initialProperties: {
@@ -453,16 +512,90 @@ define([
                         		        return d.qFallbackTitle;
                                 }),
                 dimLabel = layout.qHyperCube.qDimensionInfo[0].qFallbackTitle,
-                colorSchema = measureProp0.colorSchema;
+                colorSchema0 = typeof measureProp0.colorSchema !== 'undefined' ?  measureProp0.colorSchema : 'picasso1',
+                colorSchema1 = typeof measureProp1.colorSchema !== 'undefined' ?  measureProp1.colorSchema : 'picasso1'
+                colorsArray0 = colors[colorSchema0].slice(0), // clone array
+                colorsArray1 = colors[colorSchema1].slice(0),
+                reverseColor0 = typeof measureProp0.reverse !== 'undefined' ? measureProp0.reverse : false,
+                reverseColor1 = typeof measureProp1.reverse !== 'undefined' ? measureProp1.reverse : false,
+                ctrl = layout.qHyperCube.qMeasureInfo[0].chartStyle,
+                measLab0 = measureLabels[0],
+                measLab1 = measureLabels[1];
 
-            // var qMeaColorUser = layout.qHyperCube.qMeasureInfo.map(function(d){
-      			// 		var m = typeof d.colorPalette !== "undefined" ? d.colorPalette : {};
-      			// 		return {
-      			// 			cat: typeof m.cat !== "undefined" ? m.cat : 'picasso1',
-      			// 		}
-      			// });
+                if (reverseColor0) {
+                  colorsArray0.reverse();
+                }
+
+                if (reverseColor1) {
+                  colorsArray1.reverse();
+                }
+
+                function showPoint1 () {
+                  if(measureProp1.showPoints === true && measureProp1.chartStyle === 'line') {
+                    return true;
+                  } else {
+                    return false;
+                  }
+                };
 
 
+                function showPoint0 () {
+                  if(measureProp0.showPoints === true && measureProp0.chartStyle === 'line') {
+                    return true;
+                  } else {
+                    return false;
+                  }
+                };
+
+                function legColor0() {
+                      if(measureProp0.usePalette === 'single' && measureProp0.chartStyle === 'bar') {
+                        return measureProp0.singleColor.color;
+                      } else if(measureProp0.chartStyle === 'bar'){
+                         return colorsArray0[0];
+                      } else {
+                        return measureProp0.lineColor.color
+                      }
+
+                };
+
+                function legColor1() {
+                      if(measureProp1.usePalette === 'single' && measureProp1.chartStyle === 'bar') {
+                        return typeof measureProp1.singleColor.color !== 'undefined' ?  measureProp1.singleColor.color : rgb(34, 83, 90) ;
+                      } else if(measureProp1.chartStyle === 'bar'){
+                         return colorsArray1[colorsArray1.length-1];
+                      } else {
+                        return measureProp1.lineColor.color
+                      }
+
+                };
+
+
+                function barColor0() {
+                      if(measureProp0.usePalette === 'single') {
+                        return measureProp0.singleColor.color;
+                      } else {
+                         return {'scale': 'color0', 'ref': 'end'};
+                      }
+
+                };
+
+                function barColor1() {
+                      if(measureProp1.usePalette === 'single') {
+                        return typeof measureProp1.singleColor.color !== 'undefined' ?  measureProp1.singleColor.color : rgb(34, 83, 90) ;
+                      } else {
+                         return {'scale': 'color1', 'ref': 'end'};
+                      }
+
+                };
+
+                //console.log(colorsArray0[0]);
+                // var qMeaColorUser = layout.qHyperCube.qMeasureInfo.map(function(d){
+      					//        //var m = typeof d.colorSchema !== "undefined" ? d.colorSchema : {};
+      					//        return {
+      					// 	             cat: 'picasso1'
+      					//               }
+      			    //  });
+                //   console.log(qMeaColorUser);
             //if(layout.qHyperCube.qMeasureInfo.length === 1) {
 
               this.chart = picasso.chart({
@@ -471,9 +604,21 @@ define([
                         scales: {
                             dimension: {
                                 data: { extract: { field: 'qDimensionInfo/0' } },
-                                //padding: 0.1,
-                                paddingInner: measureProp0.innerWidth,
-                                paddingOuter: measureProp0.outerWidth
+                                padding: 0.1,
+                                paddingInner: function() {
+                                  if(measureProp1.chartStyle === 'bar') {
+                                    return 0.7;
+                                  } else {
+                                    return layout.innerWidth;
+                                  }
+                                },
+                                paddingOuter: function() {
+                                  if(measureProp1.chartStyle === 'bar') {
+                                    return 0.3;
+                                  } else {
+                                    return layout.outerWidth;
+                                  }
+                                }
                             },
                             measure: {
                                 data: { fields: ['qMeasureInfo/0','qMeasureInfo/1']},
@@ -483,16 +628,19 @@ define([
                                 min: 0,
                                 include: [0]
                             },
-                            color: {
-                              data: { field: 'qMeasureInfo/0' },
+                            color0: {
+                              data: { field: 'qMeasureInfo/0'},
                               type: 'color',
-                              range: colors.colorSchema,
+                              range: colorsArray0,
                               nice: true,
-                              //type: 'threshold-color'
 
-                                // data:  { fields: ['qMeasureInfo/0','qMeasureInfo/1']},
-                                // type: 'categorical-color',
-                                // range: ['red', 'blue'],//measureProp0.colorPalette//'color'
+                            },
+                            color1: {
+                              data: { field: 'qMeasureInfo/1'},
+                              type: 'color',
+                              range: colorsArray1,
+                              nice: true,
+
                             },
                         },
                         interactions: [{
@@ -520,46 +668,156 @@ define([
                               }]
                         }],
                         components: [
-                          labels({ c: 'bars'}),
+                          labels1({ id: '1'}),
+                          labels0({ id: '0'}),
                           yaxis({
                             id: 'y-axis',
-                            dock: measureProp0.orientation
+                            dock: layout.orientation
                           }),
                           xaxis({id: 'x-axis'
                           }),
                           range({id: 'brushrange'}),
                           legend({
                             type: 'legend-cat',
-                            scale: 'color',
+                            scale: {
+                              type: 'categorical-color',
+                              data: [measLab0,measLab1],
+                              range:  [legColor0(), legColor1()]
+                            },
                             dock: 'right',
+                            // type: 'legend-cat',
+                            // scale: 'color0',
+                            // dock: 'top'
                           }),
-                          grid({id: 'gridline'}),
                           yheader({
                             id: 'y-header',
                             text: dimLabel
+                          }),
+                          grid({id: 'gridline'}),
+                          box({ id: '0',
+                            start: 0,
+                            end: { field: 'qMeasureInfo/0' },
+                            show: function() {
+                              if(measureProp0.chartStyle === 'bar') {
+                                return true;
+                              } else {
+                                return false;
+                              }
+                            },
+                            fill: barColor0(),
+                            stroke: measureProp0.barColor.color,
+                            opacity: measureProp0.barOpacity,
+                            strokeWidth: measureProp0.barsWidth,
+                            orientation: measureProp0.barDirect,
+                            width: 1,
+                            fn: function(d) {
+                                  if(measureProp1.chartStyle ==='bar') {
+                                    return d.scale(d.datum.value) + 0.01 * d.scale.bandwidth() + 0 * d.scale.bandwidth() * 1.2;
+                                } else {
+                                  return d.scale(d.datum.value) + 0.5 * d.scale.bandwidth() + 0;
+                                }
+                              }
                           }),
                           xheader({
                             id: 'x-header',
                             text: measureLabels.join(', ')
                           }),
-                          box({ id: 'bars',
+                          box({ id: '1',
                             start: 0,
-                            end: { field: 'qMeasureInfo/0' },
-                            show: true,
-                            fill: { scale: 'color', ref: 'end'},//{ scale: 'color'},
-                            strokeWidth: measureProp0.barWidth,
-                            stroke: measureProp0.barColor.color,
-                            opacity: measureProp0.barOpacity
+                            end: { field: 'qMeasureInfo/1'},
+                            show: function() {
+                              if(measureProp1.chartStyle === 'bar') {
+                                return true;
+                              } else {
+                                return false;
+                              }
+                            },
+                            fill: barColor1(),
+                            stroke: measureProp1.barColor.color,
+                            opacity: measureProp1.barOpacity,
+                            strokeWidth: measureProp1.barsWidth,
+                            orientation: measureProp1.barDirect,
+                            width: function(d) {
+                                  if(measureProp0.chartStyle === 'line' && measureProp1.chartStyle === 'bar') {
+                                    return 2.65;
+                                } else {
+                                   return 1;
+                                }//----- Works
+                            },
+                            fn: function(d) {
+                                  if(measureProp1.chartStyle === 'bar' && measureProp0.chartStyle === 'bar') {
+                                    return d.scale(d.datum.value) + 0.01 * d.scale.bandwidth() + 1 * d.scale.bandwidth() * 1.2;
+                                } else {
+                                    return d.scale(d.datum.value) + 0.5 * d.scale.bandwidth() + 0;
+                                }//----- Works
+                             }
                           }),
-                          line({ id: 'lines',
+                          point({ id: 'p0',
+                            dot: { field: 'qMeasureInfo/0' },
+                            pshow: showPoint0(),
+                            //pshow: true,
+                            stroke: measureProp0.pstrokeColor.color,
+                            fill: measureProp0.bubbleColor.color,
+                            size: measureProp0.pointSize,
+                            opacity: measureProp0.pointOpacity,
+                            pstrokeWidth: measureProp0.pointStroke,
+                          }),
+                          line({ id: 'line0',
+                            line: { field: 'qMeasureInfo/0' },
+                            stroke: measureProp0.lineColor.color,
+                            afill: measureProp0.areaColor.color,
+                            strokeWidth: measureProp0.lineWidth,
+                            curve: measureProp0.lineType,
+                            ashow: function() {
+                              if(measureProp0.showArea === true && measureProp0.chartStyle === 'line') {
+                                return true;
+                              } else {
+                                return false;
+                              }
+                            },
+                            show: function() {
+                              if(measureProp0.chartStyle === 'line') {
+                                return true;
+                              } else {
+                                return false;
+                              }
+                            },
+                            areaOpacity: measureProp0.areaOpacity
+                          }),
+                          line({ id: 'line1',
                             line: { field: 'qMeasureInfo/1' },
-                            stroke: '#ff0000'
+                            stroke: measureProp1.lineColor.color,
+                            afill: measureProp1.areaColor.color,
+                            strokeWidth: measureProp1.lineWidth,
+                            curve: measureProp1.lineType,
+                            ashow: function() {
+                              if(measureProp1.showArea === true && measureProp1.chartStyle === 'line') {
+                                return true;
+                              } else {
+                                return false;
+                              }
+                            },
+                            show: function() {
+                              if(measureProp1.chartStyle === 'line') {
+                                return true;
+                              } else {
+                                return false;
+                              }
+                            },
+                            areaOpacity: measureProp1.areaOpacity
+
                           }),
-                          point({ id: 'p',
+                          point({ id: 'p1',
                             dot: { field: 'qMeasureInfo/1' },
-                            fill: '#12724d',
-                            size: 0.3
+                            pshow: showPoint1(),
+                            //pshow: true,
+                            stroke: measureProp1.pstrokeColor.color,
+                            fill: measureProp1.bubbleColor.color,
+                            size: measureProp1.pointSize,
+                            opacity: measureProp1.pointOpacity,
+                            pstrokeWidth: measureProp1.pointStroke,
                           }),
+
 
 
                         //     This is for Sequential legend
