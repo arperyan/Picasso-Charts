@@ -592,24 +592,6 @@ define(["./colors"], function(colors) {
                   }],
                   defaultValue: false
                 },
-                fontType: {
-                  type: "string",
-                  component: "dropdown",
-                  label: "Font Type",
-                  ref: "fontType",
-                  options: [{
-                    value: "Arial",
-                    label: "Arial",
-                  }, {
-                    value: "Helvetica",
-                    label: "Helvetica",
-                  },{
-                    value: "sans-serif",
-                    label: "Sans-Serif",
-                  }
-                ],
-                  defaultValue: "Arial"
-                },
                 font: {
                   type: "number",
                   component: "slider",
@@ -625,7 +607,29 @@ define(["./colors"], function(colors) {
                     return layout.labels === true;
                   }
                 },
-      				}
+                olabels: {
+                  type: "object",
+                  label: "Outside Label Color",
+                  ref: "olabelColor",
+                  dualOutput: true,
+                  component: "color-picker",
+                  defaultValue: {color: "#000"},
+                  show: function (layout) {
+                    return layout.labels === true;
+                  }
+                },
+                ilabels: {
+                  type: "object",
+                  label: "Inside Label Color",
+                  ref: "ilabelColor",
+                  dualOutput: true,
+                  component: "color-picker",
+                  defaultValue: {color: "#fff"},
+                  show: function (layout) {
+                    return layout.labels === true;
+                  }
+                }
+              }
             }
           }
       },

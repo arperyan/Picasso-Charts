@@ -160,6 +160,7 @@ define([
             type: 'labels',
             key: opts.key,
             displayOrder: 4,
+            show: opts.show,
             settings: {
               sources: [{
                 component: opts.id,
@@ -168,7 +169,7 @@ define([
                   type: opts.type,
                   settings: {
                     direction: 'down',
-                    fontSize: opts.fontSize || 12,
+                    fontSize: opts.fontSize,
                     fontFamily: 'Arial',
                     //align: 'align' in opts ? opts.align : 0.5,
                     align: 0.5,
@@ -177,12 +178,12 @@ define([
                         {
                           position: 'opposite', // 'inside' | 'outside' | 'opposite'
                           // justify: 0.2, // Placement of the label along the direction of the bar // Optional
-                          fill: '#333', // Color of the label // Optional
+                          fill: opts.ofill // Color of the label // Optional
                         },
                         {
                           position: 'inside',
                           //justify: 0.2,
-                          fill: '#fff'
+                          fill: opts.ifill
                         }
                       ],
                       label({ data }) {
@@ -619,18 +620,26 @@ define([
                         components: [
                           labels({
                             id: '1',
+                            show: layout.labels,
+                            fontSize: layout.lableFontSize,
+                            ifill: layout.ilabelColor.color,
+                            ofill: layout.olabelColor.color,
                             key: 'labels1',
                             type: 'bar'
                           }),
                           labels({
                             id: '0',
                             key: 'labels0',
+                            show: layout.labels,
+                            fontSize: layout.lableFontSize,
+                            ifill: layout.ilabelColor.color,
+                            ofill: layout.olabelColor.color,
                             type: 'bar'
                           }),
                           labels({
-                            id: 'p0',
+                            id: 'line1',
                             key: 'labels3',
-                            type: 'point'
+                            type: 'line'
                           }),
                           yaxis({
                             id: 'y-axis',
