@@ -196,6 +196,36 @@ define(["./colors"], function(colors) {
               show: function (layout) {
                 return layout.qDef.chartStyle === "line" && layout.qDef.showPoints === true;
               }
+            },
+            pointType: {
+              type: "string",
+              component: "dropdown",
+              label: "Point Style",
+              ref: "qDef.pointType",
+              defaultValue: 'circle',
+              options: [{
+                    value: "circle",
+                    label: "Circle"
+                  },
+                }, {
+                    value: "square",
+                    label: "Square"
+                }, {
+                {    value: "star",
+                    label: "Star"
+                }, {
+                    value: "cross",
+                    label: "Cross"
+                }, {
+                    value: "triangle",
+                    label: "Triangle"
+                }, {
+                    value: "diamond",
+                    label: "Diamond"
+                }],
+                show: function (layout) {
+                  return layout.qDef.chartStyle === "line" && layout.qDef.showPoints === true;
+                }
             }
           }
         },

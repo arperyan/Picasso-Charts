@@ -126,6 +126,7 @@ define([
               x: { scale: 'dimension' },
               y: { scale: 'measure', ref: 'dot' },
               fill: opts.fill,
+              shape: opts.shape, ///circle ,square,star,cross,triangle,diamond
               size: opts.size,
               opacity: opts.opacity,
               strokeWidth: opts.pstrokeWidth,
@@ -158,36 +159,36 @@ define([
         var labels = function (opts) {
           return {
             type: 'labels',
-            key: 'labels',
+            key: opts.key,
             displayOrder: 4,
+            show: opts.show,
             settings: {
               sources: [{
-                component: opts.c,
-                selector: 'rect',
+                component: opts.id,
+                selector: opts.selector,
                 strategy: {
-                  type: 'bar',
+                  type: opts.type,
                   settings: {
-                    direction: 'down',
-                    fontSize: opts.fontSize || 12,
+                    direction: opts.direct,
+                    fontSize: opts.fontSize,
                     fontFamily: 'Arial',
                     //align: 'align' in opts ? opts.align : 0.5,
-                    align: 0.5,
+                    //align: -0.5,
                      labels: [{
                       placements: [
                         {
                           position: 'opposite', // 'inside' | 'outside' | 'opposite'
-                          // justify: 0.2, // Placement of the label along the direction of the bar // Optional
-                          fill: '#333', // Color of the label // Optional
+                          //justify: opts.justify, // Placement of the label along the direction of the bar // Optional
+                          fill: opts.ofill // Color of the label // Optional
                         },
                         {
                           position: 'inside',
                           //justify: 0.2,
-                          fill: '#fff'
+                          fill: opts.ifill
                         }
                       ],
-                      label({ data }) {
-                        return data ? data.end.label : '';
-                      }
+                      label: opts.label
+
                     }]
                   }
                 }
@@ -537,6 +538,23 @@ define([
 
                 };
 
+                function pointType0() {
+                      if(measureProp0.pointType === 'circle') {
+                        return 'circle';
+                    } else {
+                       return 'path';
+                    }//----- Works
+                };
+
+
+                function pointType1() {
+                      if(measureProp1.pointType === 'circle') {
+                        return 'circle';
+                    } else {
+                       return 'path';
+                    }//----- Works
+                };
+
                 //console.log(colorsArray0[0]);
                 // var qMeaColorUser = layout.qHyperCube.qMeasureInfo.map(function(d){
       					//        //var m = typeof d.colorSchema !== "undefined" ? d.colorSchema : {};
@@ -615,10 +633,69 @@ define([
                                   }
                                 }
                               }]
-                        }],
+                            },
+                            {
+                            type: 'native',
+                            events: {
+                              wheel: function w(e) {
+                                if (e) {
+                                  var components = this.chart.componentsFromPoint(e);
+                                  components.forEach(function (comp) {
+                                    comp.emit('scroll', e.deltaY);
+                                  });
+                                  e.preventDefault();
+                                }
+                              }
+                            }
+                          }
+                        ],
                         components: [
-                          labels({ c: '1'}),
-                          labels({ id: '0'}),
+                          labels({
+                            id: '1',
+                            show: layout.labels,
+                            fontSize: layout.lableFontSize,
+                            ifill: layout.ilabelColor.color,
+                            ofill: layout.olabelColor.color,
+                            label: ({ data }) => `${data.end.label}`,
+                            selector: 'rect',
+                            direct: 'down',
+                            key: 'labels1',
+                            type: 'bar'
+                          }),
+                          labels({
+                            id: '0',
+                            key: 'labels0',
+                            show: layout.labels,
+                            fontSize: layout.lableFontSize,
+                            ifill: layout.ilabelColor.color,
+                            ofill: layout.olabelColor.color,
+                            label: ({ data }) => `${data.end.label}`,
+                            direct: 'down',
+                            selector: 'rect',
+                            type: 'bar'
+                          }),
+                          labels({
+                            id: 'p0',
+                            key: 'labels2',
+                            fontSize: layout.lableFontSize,
+                            ifill: layout.ilabelColor.color,
+                            ofill: layout.olabelColor.color,
+                            label: ({ data }) => `${data.dot.label}`,
+                            direct: 'right', ///or up
+                            selector: pointType0(),
+                            type: 'bar'
+                          }),
+                          labels({
+                            id: 'p1',
+                            key: 'labels3',
+                            fontSize: layout.lableFontSize,
+                            ifill: layout.ilabelColor.color,
+                            ofill: layout.olabelColor.color,
+                            label: ({ data }) => `${data.dot.label}`,
+                            direct: 'right', ///or up
+                            selector: pointType1(),
+                            type: 'bar'
+                          }),
                           yaxis({
                             id: 'y-axis',
                             dock: layout.orientation
@@ -638,14 +715,10 @@ define([
                             // scale: 'color0',
                             // dock: 'top'
                           }),
-                          yheader({
-                            id: 'y-header',
-                            text: dimLabel
-                          }),
                           grid({id: 'gridline'}),
                           box({ id: '0',
                             start: 0,
-                            end: {field: 'qMeasureInfo/0'},
+                            end: { field: 'qMeasureInfo/0' },
                             show: function() {
                               if(measureProp0.chartStyle === 'bar') {
                                 return true;
@@ -666,6 +739,10 @@ define([
                                   return d.scale(d.datum.value) + 0.5 * d.scale.bandwidth() + 0;
                                 }
                               }
+                          }),
+                          yheader({
+                            id: 'y-header',
+                            text: dimLabel
                           }),
                           xheader({
                             id: 'x-header',
@@ -701,16 +778,6 @@ define([
                                 }//----- Works
                              }
                           }),
-                          point({ id: 'p0',
-                            dot: { field: 'qMeasureInfo/0' },
-                            pshow: showPoint0(),
-                            //pshow: true,
-                            stroke: measureProp0.pstrokeColor.color,
-                            fill: measureProp0.bubbleColor.color,
-                            size: measureProp0.pointSize,
-                            opacity: measureProp0.pointOpacity,
-                            pstrokeWidth: measureProp0.pointStroke,
-                          }),
                           line({ id: 'line0',
                             line: { field: 'qMeasureInfo/0' },
                             stroke: measureProp0.lineColor.color,
@@ -732,6 +799,23 @@ define([
                               }
                             },
                             areaOpacity: measureProp0.areaOpacity
+                          }),
+                          point({ id: 'p0',
+                            dot: { field: 'qMeasureInfo/0' },
+                            pshow: showPoint0(),
+                            //pshow: true,
+                            stroke: measureProp0.pstrokeColor.color,
+                            fill: measureProp0.bubbleColor.color,
+                            shape:  measureProp0.pointType,
+                            size: function() {
+                              if(measureProp0.chartStyle === 'line' && measureProp1.chartStyle === 'bar') {
+                                return measureProp0.pointSize*3;
+                              } else {
+                                return measureProp0.pointSize;
+                              }
+                            },
+                            opacity: measureProp0.pointOpacity,
+                            pstrokeWidth: measureProp0.pointStroke,
                           }),
                           line({ id: 'line1',
                             line: { field: 'qMeasureInfo/1' },
@@ -765,9 +849,8 @@ define([
                             size: measureProp1.pointSize,
                             opacity: measureProp1.pointOpacity,
                             pstrokeWidth: measureProp1.pointStroke,
-                          })
-
-
+                            shape:  measureProp1.pointType,
+                          }),
 
                         //     This is for Sequential legend
                         //      type: 'legend-seq',
@@ -799,6 +882,7 @@ define([
                     scope.selectValues(0, selections, true);
                   }
               });
+
 
               // this.chartBrush = this.chart.brush('selection')
               // this.chartBrush.on('update', (added, removed) => {

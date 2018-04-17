@@ -126,6 +126,7 @@ define([
               x: { scale: 'dimension' },
               y: { scale: 'measure', ref: 'dot' },
               fill: opts.fill,
+              shape: opts.shape, ///circle ,square,star,cross,triangle,diamond
               size: opts.size,
               opacity: opts.opacity,
               strokeWidth: opts.pstrokeWidth,
@@ -164,20 +165,20 @@ define([
             settings: {
               sources: [{
                 component: opts.id,
-                selector: 'rect',
+                selector: opts.selector,
                 strategy: {
                   type: opts.type,
                   settings: {
-                    direction: 'down',
+                    direction: opts.direct,
                     fontSize: opts.fontSize,
                     fontFamily: 'Arial',
                     //align: 'align' in opts ? opts.align : 0.5,
-                    align: 0.5,
+                    //align: -0.5,
                      labels: [{
                       placements: [
                         {
                           position: 'opposite', // 'inside' | 'outside' | 'opposite'
-                          // justify: 0.2, // Placement of the label along the direction of the bar // Optional
+                          //justify: opts.justify, // Placement of the label along the direction of the bar // Optional
                           fill: opts.ofill // Color of the label // Optional
                         },
                         {
@@ -186,9 +187,8 @@ define([
                           fill: opts.ifill
                         }
                       ],
-                      label({ data }) {
-                        return data ? data.end.label : '';
-                      }
+                      label: opts.label
+
                     }]
                   }
                 }
@@ -538,6 +538,27 @@ define([
 
                 };
 
+                function pointType0() {
+                      if(measureProp0.pointType === 'circle') {
+                        return 'circle';
+                    } else if measureProp0.pointType === 'square') {
+                       return 'rect';
+                    } else {
+                      return 'path';
+                    }//----- Works
+                };
+
+
+                function pointType1() {
+                      if(measureProp1.pointType === 'circle') {
+                        return 'circle';
+                    } else if measureProp1.pointType === 'square') {
+                       return 'rect';
+                    } else {
+                      return 'path';
+                    }//-----
+                };
+
                 //console.log(colorsArray0[0]);
                 // var qMeaColorUser = layout.qHyperCube.qMeasureInfo.map(function(d){
       					//        //var m = typeof d.colorSchema !== "undefined" ? d.colorSchema : {};
@@ -616,7 +637,22 @@ define([
                                   }
                                 }
                               }]
-                        }],
+                            },
+                            {
+                            type: 'native',
+                            events: {
+                              wheel: function w(e) {
+                                if (e) {
+                                  var components = this.chart.componentsFromPoint(e);
+                                  components.forEach(function (comp) {
+                                    comp.emit('scroll', e.deltaY);
+                                  });
+                                  e.preventDefault();
+                                }
+                              }
+                            }
+                          }
+                        ],
                         components: [
                           labels({
                             id: '1',
@@ -624,6 +660,9 @@ define([
                             fontSize: layout.lableFontSize,
                             ifill: layout.ilabelColor.color,
                             ofill: layout.olabelColor.color,
+                            label: ({ data }) => `${data.end.label}`,
+                            selector: 'rect',
+                            direct: 'down',
                             key: 'labels1',
                             type: 'bar'
                           }),
@@ -634,12 +673,32 @@ define([
                             fontSize: layout.lableFontSize,
                             ifill: layout.ilabelColor.color,
                             ofill: layout.olabelColor.color,
+                            label: ({ data }) => `${data.end.label}`,
+                            direct: 'down',
+                            selector: 'rect',
                             type: 'bar'
                           }),
                           labels({
-                            id: 'line1',
+                            id: 'p0',
+                            key: 'labels2',
+                            fontSize: layout.lableFontSize,
+                            ifill: layout.ilabelColor.color,
+                            ofill: layout.olabelColor.color,
+                            label: ({ data }) => `${data.dot.label}`,
+                            direct: 'right', ///or up
+                            selector: pointType0(),
+                            type: 'bar'
+                          }),
+                          labels({
+                            id: 'p1',
                             key: 'labels3',
-                            type: 'line'
+                            fontSize: layout.lableFontSize,
+                            ifill: layout.ilabelColor.color,
+                            ofill: layout.olabelColor.color,
+                            label: ({ data }) => `${data.dot.label}`,
+                            direct: 'right', ///or up
+                            selector: pointType1(),
+                            type: 'bar'
                           }),
                           yaxis({
                             id: 'y-axis',
@@ -751,6 +810,7 @@ define([
                             //pshow: true,
                             stroke: measureProp0.pstrokeColor.color,
                             fill: measureProp0.bubbleColor.color,
+                            shape:  measureProp0.pointType,
                             size: function() {
                               if(measureProp0.chartStyle === 'line' && measureProp1.chartStyle === 'bar') {
                                 return measureProp0.pointSize*3;
@@ -793,9 +853,8 @@ define([
                             size: measureProp1.pointSize,
                             opacity: measureProp1.pointOpacity,
                             pstrokeWidth: measureProp1.pointStroke,
+                            shape:  measureProp1.pointType,
                           }),
-
-
 
                         //     This is for Sequential legend
                         //      type: 'legend-seq',
@@ -827,6 +886,7 @@ define([
                     scope.selectValues(0, selections, true);
                   }
               });
+
 
               // this.chartBrush = this.chart.brush('selection')
               // this.chartBrush.on('update', (added, removed) => {
