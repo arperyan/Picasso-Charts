@@ -283,8 +283,8 @@ define([
             },
             ticks: {
               show: true,
-              stroke: 'red',
-              strokeWidth: 2,
+              stroke: 'grey',
+              strokeWidth: 1,
             },
             minorTicks: {
               show: true,
@@ -334,7 +334,7 @@ define([
                   margin: 0, // Space in pixels between the ticks and the line. // Optional
                 },
                 line: {
-                  show: false, // Toggle line on/off // Optional
+                  show: true, // Toggle line on/off // Optional
                 },
                 paddingStart: 0, // Padding in direction perpendicular to the axis // Optional
                 paddingEnd: 10, // Padding in direction perpendicular to the axis // Optional
@@ -373,7 +373,7 @@ define([
                 margin: 0, // Space in pixels between the ticks and the line. // Optional
               },
               line: {
-                show: false, // Toggle line on/off // Optional
+                show: true, // Toggle line on/off // Optional
               },
               paddingStart: 0, // Padding in direction perpendicular to the axis // Optional
               paddingEnd: 10, // Padding in direction perpendicular to the axis // Optional
@@ -423,10 +423,10 @@ define([
                 bubble: {  // Optional
                   fontSize: 16, // Optional
                   fontFamily: 'Arial', // Optional
-                  fill: '#ff0000', // Optional
+                  fill: '#D76C6C', // Optional
                   color: '#fff', // Optional
                   stroke: '#000'/* string */, // Optional
-                  strokeWidth: 3, // Optional
+                  strokeWidth: 2, // Optional
                   borderRadius: 3, // Optional
                 },
                 target: {  // Optional
@@ -499,7 +499,7 @@ define([
 
                 function legColor0() {
                       if(measureProp0.usePalette === 'single' && measureProp0.chartStyle === 'bar') {
-                        return measureProp0.singleColor.color;
+                        return typeof measureProp0.singleColor.color !== 'undefined' ?  measureProp0.singleColor.color : '#7DB8DA';
                       } else if(measureProp0.chartStyle === 'bar'){
                          return colorsArray0[0];
                       } else {
@@ -509,10 +509,12 @@ define([
                 };
 
                 function legColor1() {
-                      if(measureProp1.usePalette === 'single' && measureProp1.chartStyle === 'bar') {
-                        return typeof measureProp1.singleColor.color !== 'undefined' ?  measureProp1.singleColor.color : rgb(34, 83, 90) ;
-                      } else if(measureProp1.chartStyle === 'bar'){
+                      if(measureProp1.usePalette === 'single' && measureProp1.chartStyle === 'bar' && measureProp0.singleColor.color !== measureProp1.singleColor.color) {
+                        return measureProp1.singleColor.color;
+                      } else if(measureProp1.chartStyle === 'bar' && measureProp0.singleColor.color !== measureProp1.singleColor.color){
                          return colorsArray1[colorsArray1.length-1];
+                      } else if(measureProp0.singleColor.color === measureProp1.singleColor.color) {
+                        return '#1f8d91';
                       } else {
                         return measureProp1.lineColor.color
                       }
@@ -522,7 +524,7 @@ define([
 
                 function barColor0() {
                       if(measureProp0.usePalette === 'single') {
-                        return measureProp0.singleColor.color;
+                        return typeof measureProp0.singleColor.color !== 'undefined' ?  measureProp0.singleColor.color : '#7DB8DA';
                       } else {
                          return {'scale': 'color0', 'ref': 'end'};
                       }
@@ -530,8 +532,10 @@ define([
                 };
 
                 function barColor1() {
-                      if(measureProp1.usePalette === 'single') {
-                        return typeof measureProp1.singleColor.color !== 'undefined' ?  measureProp1.singleColor.color : rgb(34, 83, 90) ;
+                      if(measureProp1.usePalette === 'single' && measureProp0.singleColor.color !== measureProp1.singleColor.color) {
+                        return measureProp1.singleColor.color;
+                      } else if(measureProp0.singleColor.color === measureProp1.singleColor.color){
+                        return '#1f8d91';
                       } else {
                          return {'scale': 'color1', 'ref': 'end'};
                       }
@@ -541,7 +545,7 @@ define([
                 function pointType0() {
                       if(measureProp0.pointType === 'circle') {
                         return 'circle';
-                    } else if measureProp0.pointType === 'square') {
+                    } else if (measureProp0.pointType === 'square') {
                        return 'rect';
                     } else {
                       return 'path';
@@ -552,7 +556,7 @@ define([
                 function pointType1() {
                       if(measureProp1.pointType === 'circle') {
                         return 'circle';
-                    } else if measureProp1.pointType === 'square') {
+                    } else if (measureProp1.pointType === 'square') {
                        return 'rect';
                     } else {
                       return 'path';
@@ -681,6 +685,7 @@ define([
                           labels({
                             id: 'p0',
                             key: 'labels2',
+                            show: layout.labels,
                             fontSize: layout.lableFontSize,
                             ifill: layout.ilabelColor.color,
                             ofill: layout.olabelColor.color,
@@ -692,6 +697,7 @@ define([
                           labels({
                             id: 'p1',
                             key: 'labels3',
+                            show: layout.labels,
                             fontSize: layout.lableFontSize,
                             ifill: layout.ilabelColor.color,
                             ofill: layout.olabelColor.color,
