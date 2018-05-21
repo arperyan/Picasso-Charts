@@ -10,7 +10,7 @@ define(["./colors"], function(colors) {
 
 	var measures = {
 		uses: "measures",
-		min: 2,
+		min: 1,
 		max: 2,
     items: {
       chartStyle: {
@@ -206,19 +206,19 @@ define(["./colors"], function(colors) {
               options: [{
                     value: "circle",
                     label: "Circle"
-                }, {
+                  }, {
                     value: "square",
                     label: "Square"
-                }, {
+                  }, {
                     value: "star",
                     label: "Star"
-                }, {
+                  }, {
                     value: "cross",
                     label: "Cross"
-                }, {
+                  }, {
                     value: "triangle",
                     label: "Triangle"
-                }, {
+                  }, {
                     value: "diamond",
                     label: "Diamond"
                 }],
@@ -440,7 +440,7 @@ define(["./colors"], function(colors) {
             ref: "qDef.singleColor",
             dualOutput: true,
             component: "color-picker",
-            defaultValue: {color: "#65D3DA"},
+            defaultValue: {color: "#7DB8DA"},
             show: function (layout) {
               return layout.qDef.usePalette === "single" && layout.qDef.chartStyle === "bar";
             }
