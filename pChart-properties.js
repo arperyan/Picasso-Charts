@@ -808,8 +808,7 @@ define(["./colors"], function(colors) {
         component: {
           template: '<div><img src="../extensions/pChart/png/Arpe.png"  style="max-width:250px;"></div>' +
             '<p style="font-size:10px; color: #7f7f7f; text-align:left;"><i>Created by: Ryan Arpe</i>' +
-            '<span style="font-size:10px; color: #7f7f7f; float:right; margin-right:10px"><i>v1.0</i></span></p>' +
-            '<div style="width:95%; font-size:10px; margin-right:10px; color: #7f7f7f; text-align: left"><i>Colaborator: Ralf Becher</i></div>'
+            '<span style="font-size:10px; color: #7f7f7f; float:right; margin-right:10px"><i>v1.0</i></span></p>'
         }
       }
     }
